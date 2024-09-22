@@ -1,23 +1,27 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 import './assets/tailwind.css'
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <img alt="logo-zeeslag" class="logo" src="@/assets/logo-zeeslag.jpg"/>
 
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <router-link to="/DummyViewGameUI">DummyViewGameUI</router-link>
+      <nav class="navbar">
+        <ul>
+          <li><RouterLink to="/">Home</RouterLink></li>
+          <li><RouterLink to="/about">About</RouterLink></li>
+          <li><RouterLink to="/DummyViewGameUI">DummyViewGameUI</RouterLink></li>
+          <li><RouterLink to="/login">Log In</RouterLink></li>
+          <li><RouterLink to="/register">Register</RouterLink></li>
+          <li><RouterLink to="/play">Play Now</RouterLink></li>
+        </ul>
       </nav>
     </div>
   </header>
+
+  
 
   <RouterView />
 </template>
@@ -29,33 +33,35 @@ header {
 }
 
 .logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
   width: 100%;
-  font-size: 12px;
+  max-width: 1200px;
+  background-size: cover;
+  height: 50;
+  max-height: 200px;
+  width: 400;
+}
+
+.navbar {
+  background-color: #333;
+  padding: 1rem;
   text-align: center;
-  margin-top: 2rem;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+.navbar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+.navbar ul li {
+  display: inline;
+  margin: 0 15px;
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
+.navbar ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 @media (min-width: 1024px) {
@@ -66,22 +72,19 @@ nav a:first-of-type {
   }
 
   .logo {
-    margin: 0 2rem 0 0;
-  }
+  display: block;
+  margin: 0 auto 2rem;
+  max-width: 100%; /* Zorgt ervoor dat de afbeelding niet breder wordt dan het scherm */
+  height: 50px;    /* Behoud de verhoudingen */
+  max-height: 100px; /* Beperk de hoogte van de afbeelding */
+  object-fit: cover; /* Zorgt ervoor dat de afbeelding netjes bijgesneden wordt indien nodig */
+}
+
 
   header .wrapper {
     display: flex;
     place-items: flex-start;
     flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
   }
 }
 </style>
