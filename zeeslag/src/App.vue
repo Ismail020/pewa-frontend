@@ -74,10 +74,10 @@ header {
   .logo {
   display: block;
   margin: 0 auto 2rem;
-  max-width: 100%; /* Zorgt ervoor dat de afbeelding niet breder wordt dan het scherm */
-  height: 50px;    /* Behoud de verhoudingen */
-  max-height: 100px; /* Beperk de hoogte van de afbeelding */
-  object-fit: cover; /* Zorgt ervoor dat de afbeelding netjes bijgesneden wordt indien nodig */
+  max-width: 100%; 
+  height: 50px;    
+  max-height: 100px; 
+  object-fit: cover; 
 }
 
 
