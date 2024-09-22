@@ -15,6 +15,7 @@ import './assets/tailwind.css'
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <router-link to="/DummyViewGameUI">DummyViewGameUI</router-link>
+        <router-link to="/GameUIView">Game</router-link>
       </nav>
     </div>
   </header>
