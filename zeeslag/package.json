@@ -2,19 +2,23 @@
   "name": "zeeslag",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "vite build",
+    "dev": "vite",
     "preview": "vite preview"
   },
   "dependencies": {
+    "autoprefixer": "^10",
     "pinia": "^2.1.7",
+    "postcss": "^8",
+    "tailwindcss": "^3",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.5",
-    "vite": "^5.3.1"
-  }
+    "vite": "^5.3.1",
+    "vue-cli-plugin-tailwind": "~3.0.0"
+  },
+  "type": "module"
 }

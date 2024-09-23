@@ -1,19 +1,24 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import DummyHeader from './components/DummyComponent.vue'
+import './assets/tailwind.css'
 </script>
 
 <template>
   <header>
-    <!-- Replace HelloWorld with DummyHeader -->
-    <DummyHeader />
+    <img alt="logo-zeeslag" class="logo" src="@/assets/logo-zeeslag.jpg"/>
 
-    <nav>
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
-    </nav>
+    <div class="wrapper">
+      <nav class="navbar">
+        <ul>
+          <li><RouterLink to="/">Home</RouterLink></li>
+          <li><RouterLink to="/about">About</RouterLink></li>
+          <li><RouterLink to="/login">Log In</RouterLink></li>
+          <li><RouterLink to="/register">Register</RouterLink></li>
+          <li><RouterLink to="/play">Play Now</RouterLink></li>
+        </ul>
+      </nav>
+    </div>
   </header>
-
   <RouterView />
 </template>
 
@@ -23,29 +28,36 @@ header {
   max-height: 100vh;
 }
 
-nav {
+.logo {
   width: 100%;
-  font-size: 12px;
+  max-width: 1200px;
+  background-size: cover;
+  height: 50px;
+  max-height: 200px;
+  width: 400px;
+}
+
+.navbar {
+  background-color: #333;
+  padding: 1rem;
   text-align: center;
-  margin-top: 2rem;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+.navbar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+.navbar ul li {
+  display: inline;
+  margin: 0 15px;
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
+.navbar ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 @media (min-width: 1024px) {
@@ -55,12 +67,20 @@ nav a:first-of-type {
     padding-right: calc(var(--section-gap) / 2);
   }
 
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-    padding: 1rem 0;
-    margin-top: 1rem;
+  .logo {
+  display: block;
+  margin: 0 auto 2rem;
+  max-width: 100%; 
+  height: 50px;    
+  max-height: 100px; 
+  object-fit: cover; 
+}
+
+
+  header .wrapper {
+    display: flex;
+    place-items: flex-start;
+    flex-wrap: wrap;
   }
 }
 </style>
