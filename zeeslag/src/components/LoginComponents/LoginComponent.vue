@@ -51,7 +51,7 @@ export default {
       </form>
       <div class="input">
         <span id="account">Don't have an account?</span>
-        <span id="register"> <router-link to="/registration"> Register! </router-link></span>
+        <span id="register"> <router-link to="/register"> Register! </router-link></span>
       </div>
     </div>
   </div>
@@ -75,7 +75,6 @@ export default {
   flex-direction: column;
   max-width: 50vw;
   background-color: #F6F6F6;
-  margin: auto;
   border-radius: 2px;
 }
 
