@@ -21,6 +21,11 @@ const router = createRouter({
       path: '/DummyViewGameUI',
       name: 'DummyViewGameUI',
       component: () => import('../views/DummyViewGameUI.vue')
+    },
+    {
+      path: '/LoginView',
+      name: 'LoginView',
+      component: () => import('../views/LoginView.vue')
     }
   ]
 })
