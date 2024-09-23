@@ -75,7 +75,6 @@ export default {
   flex-direction: column;
   max-width: 50vw;
   background-color: #F6F6F6;
-  margin: auto;
   border-radius: 2px;
 }
 
