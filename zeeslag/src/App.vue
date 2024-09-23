@@ -4,7 +4,6 @@ import './assets/tailwind.css'
 </script>
 
 <template>
-<<<<<<< HEAD
   <header>
     <img alt="logo-zeeslag" class="logo" src="@/assets/logo-zeeslag.jpg"/>
 
