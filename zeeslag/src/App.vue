@@ -23,44 +23,8 @@ import './assets/tailwind.css'
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
 
-.logo {
-  width: 100%;
-  max-width: 1200px;
-  background-size: cover;
-  height: 50px;
-  max-height: 200px;
-  width: 400px;
-}
-
-.navbar {
-  background-color: #333;
-  padding: 1rem;
-  text-align: center;
-}
-
-.navbar ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-.navbar ul li {
-  display: inline;
-  margin: 0 15px;
-}
-
-.navbar ul li a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-@media (min-width: 1024px) {
+/*@media (min-width: 1024px) {
   header {
     display: flex;
     place-items: center;
@@ -82,5 +46,5 @@ header {
     place-items: flex-start;
     flex-wrap: wrap;
   }
-}
+*/
 </style>
