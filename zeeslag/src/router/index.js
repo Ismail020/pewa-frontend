@@ -18,16 +18,20 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue')
     },
     {
-      path: '/DummyViewGameUI',
-      name: 'DummyViewGameUI',
-      component: () => import('../views/DummyViewGameUI.vue')
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue'),
     },
     {
-      path: '/GameUIView',
-      name: 'GameUIView',
-      component: () => import('../views/GameUIView.vue')
+      path: '/register',
+      name: 'register',
+      component: () => import('../views/RegisterView.vue'),
+    },
+    {
+      path: '/play',
+      name: 'play',
+      component: () => import('../views/GameUIView.vue'),
     }
-
   ]
 })
 
