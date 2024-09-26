@@ -1,6 +1,10 @@
 <template>
+  <!-- Footer container with background color and padding -->
   <footer class="font-sans tracking-wide bg-black py-10 px-12">
+    <!-- Grid layout for footer sections -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12">
+      
+      <!-- Company section -->
       <div>
         <h4 class="text-white text-lg font-semibold mb-6">Company</h4>
         <ul class="space-y-5">
@@ -10,6 +14,7 @@
         </ul>
       </div>
 
+      <!-- Information section -->
       <div>
         <h4 class="text-white text-lg font-semibold mb-6">Information</h4>
         <ul class="space-y-5">
@@ -19,6 +24,7 @@
         </ul>
       </div>
 
+      <!-- Help section -->
       <div>
         <h4 class="text-white text-lg font-semibold mb-6">Help</h4>
         <ul class="space-y-5">
@@ -28,11 +34,12 @@
         </ul>
       </div>
 
+      <!-- Newsletter section -->
       <div class="col-span-full max-w-2xl">
         <h4 class="text-white text-lg font-semibold mb-6">Newsletter</h4>
-        <p class="text-gray-300 mb-4 text-[15px]">Subscribe to our newsletter to get updates on zeeslag.
-        </p>
+        <p class="text-gray-300 mb-4 text-[15px]">Subscribe to our newsletter to get updates on zeeslag.</p>
 
+        <!-- Newsletter subscription form -->
         <form class="mb-4">
           <div class="flex items-center">
             <input type="email" placeholder="Enter your email"
@@ -44,8 +51,8 @@
       </div>
     </div>
 
-    <p class='text-gray-300 text-right text-[15px] mt-8'>© Zeeslag. All rights reserved.
-    </p>
+    <!-- Footer copyright text -->
+    <p class='text-gray-300 text-right text-[15px] mt-8'>© Zeeslag. All rights reserved.</p>
   </footer>
 </template>
 
