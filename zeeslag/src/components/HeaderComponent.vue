@@ -1,5 +1,4 @@
 <template>
-    <!-- Header container -->
     <header>
         <!-- Background image container with overlay -->
         <div
