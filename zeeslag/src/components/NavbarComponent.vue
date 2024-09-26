@@ -1,20 +1,33 @@
 <template>
     <nav class="bg-gray-800 p-4">
-      <ul class="flex space-x-4">
-        <li><RouterLink to="/" class="text-white hover:text-gray-400">Home</RouterLink></li>
-        <li><RouterLink to="/about" class="text-white hover:text-gray-400">About</RouterLink></li>
-        <li><RouterLink to="/login" class="text-white hover:text-gray-400">Log In</RouterLink></li>
-        <li><RouterLink to="/register" class="text-white hover:text-gray-400">Register</RouterLink></li>
-        <li><RouterLink to="/play" class="text-white hover:text-gray-400">Play Now</RouterLink></li>
-      </ul>
+        <ul class="flex justify-between w-full">
+            <div class="flex space-x-4">
+                <li>
+                    <RouterLink to="/" class="text-white hover:text-gray-400">Home</RouterLink>
+                </li>
+                <li>
+                    <RouterLink to="/about" class="text-white hover:text-gray-400">About</RouterLink>
+                </li>
+                <li>
+                    <RouterLink to="/play" class="text-white hover:text-gray-400">Play Now</RouterLink>
+                </li>
+            </div>
+            <div class="flex space-x-4">
+                <li>
+                    <RouterLink to="/register" class="text-white hover:text-gray-400">Register</RouterLink>
+                </li>
+                <li>
+                    <RouterLink to="/login" class="text-white hover:text-gray-400">Log In</RouterLink>
+                </li>
+            </div>
+        </ul>
     </nav>
-  </template>
-  
-  <script>
-  export default {
+</template>
+
+<script>
+export default {
     name: 'Navbar'
-  }
-  </script>
-  
-  <style scoped>
-  </style>
+}
+</script>
+
+<style scoped></style>

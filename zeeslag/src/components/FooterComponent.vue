@@ -1,5 +1,5 @@
 <template>
-<footer class="font-sans tracking-wide bg-black py-10 px-12">
+  <footer class="font-sans tracking-wide bg-black py-10 px-12">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12">
       <div>
         <h4 class="text-white text-lg font-semibold mb-6">Company</h4>
@@ -55,6 +55,4 @@ export default {
 };
 </script>
 
-<style scoped>
-/* No custom styles needed, using Tailwind CSS classes */
-</style>
+<style scoped></style>

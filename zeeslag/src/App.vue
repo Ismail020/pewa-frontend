@@ -7,11 +7,10 @@ import HeaderComponent from './components/HeaderComponent.vue';
 
 <template>
   <div>
-    <HeaderComponent/>
+    <HeaderComponent />
     <RouterView />
-    <FooterComponent/>
+    <FooterComponent />
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
