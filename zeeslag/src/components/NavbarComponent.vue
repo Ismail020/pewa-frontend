@@ -1,6 +1,6 @@
 <template>
     <!-- Navbar container with background color and padding -->
-    <nav class="bg-gray-800 p-4">
+    <nav class="bg-gray-700 p-4">
         <!-- Flex container to space out the left and right sections -->
         <ul class="flex justify-between w-full">
             <!-- Left-aligned items container -->
