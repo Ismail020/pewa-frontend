@@ -4,12 +4,14 @@ export default {
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+      show: false,
     }
   },
   methods: {
+    //send POST request with email and password
     login() {
-      const url = "";
+      const url = "http://localhost:8080/api/v1/auth/authenticate";
       fetch(url, {
         method: "POST",
         headers: {
@@ -20,7 +22,21 @@ export default {
           password: this.password
         })
       })
-          .then((response) => response.json())
+          //handle negative server response: show the hidden text with a link to the registration page
+          .then((response) => {
+            if (!response.ok) {
+              this.show = true;
+              throw new Error(`Server response was ${response.status}.`)
+            }
+            //handle positive server response - redirect further to play page
+            this.$router.push({path: "/play"})
+            return response.json();
+          })
+          .then((data) => {
+            //preserve the token for possible future use with pinja
+            const token = data.token;
+          })
+          .catch((error => console.error(error)))
     }
   }
 };
@@ -45,14 +61,18 @@ export default {
                  placeholder="Password"
                  required/>
         </div>
+
         <div class="input">
           <button type="submit">LOGIN</button>
         </div>
+        <div id="hidden" v-if="show">No user could be found.
+          <RouterLink to="/register">Register now!</RouterLink>
+        </div>
+        <div class="input">
+          <span id="account">Don't have an account?</span>
+          <span id="register"> <router-link to="/register"> Register! </router-link></span>
+        </div>
       </form>
-      <div class="input">
-        <span id="account">Don't have an account?</span>
-        <span id="register"> <router-link to="/register"> Register! </router-link></span>
-      </div>
     </div>
   </div>
 </template>
@@ -116,6 +136,10 @@ button:hover {
   font-size: 20px;
   width: 80%;
   text-align: center;
+
+  #hidden {
+    display: none;
+  }
 
 }
 </style>
