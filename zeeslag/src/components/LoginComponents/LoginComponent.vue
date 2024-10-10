@@ -3,7 +3,7 @@ export default {
   name: "LoginComponent",
   data() {
     return {
-      username: '',
+      email: '',
       password: '',
       show: false,
     }
@@ -18,7 +18,7 @@ export default {
           'Content-type': 'application/json'
         },
         body: JSON.stringify({
-          username: this.username,
+          email: this.email,
           password: this.password
         })
       })
@@ -48,10 +48,10 @@ export default {
     <div class="login-form">
       <form @submit.prevent="login">
         <div id="upper-input" class="input">
-          <input v-model="username"
-                 id="username"
+          <input v-model="email"
+                 id="email"
                  type="text"
-                 placeholder="Username"
+                 placeholder="email"
                  required/>
         </div>
         <div class="input">
@@ -131,7 +131,7 @@ button:hover {
   padding-top: 60px;
 }
 
-#password, #username {
+#password, #email {
   padding: 10px;
   font-size: 20px;
   width: 80%;
