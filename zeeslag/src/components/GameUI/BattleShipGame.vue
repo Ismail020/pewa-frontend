@@ -9,6 +9,8 @@
         :score2="score2"
       />
       
+      <TimerComponent :time="30" @time-up="switchTurn" />
+  
       <main class="grid grid-cols-3 gap-4 mt-6">
         <LogComponent :title="'P1 Log'" :moves="p1Moves" />
         
@@ -29,6 +31,7 @@
   import LogComponent from './LogComponent.vue';
   import BoardComponent from './BoardComponent.vue';
   import ChatComponent from './ChatComponent.vue';
+  import TimerComponent from './TimerComponent.vue';  // Import the Timer Component
   
   export default {
     name: "BattleshipGame",
@@ -37,6 +40,7 @@
       LogComponent,
       BoardComponent,
       ChatComponent,
+      TimerComponent,  // Register the Timer Component
     },
     data() {
       return {
@@ -63,6 +67,16 @@
         ]
       };
     },
+    methods: {
+      switchTurn() {
+        this.turn = this.turn === "P1" ? "P2" : "P1"; // Switch turns
+        this.round++; // Increment the round
+      },
+    },
   };
   </script>
+  
+  <style scoped>
+  /* Optional: Style for the main game component */
+  </style>
   
