@@ -16,6 +16,10 @@
         friends: [
           { id: 1, name: 'Johann1337', status: 'in-game' },
           { id: 2, name: 'Monkey11', status: 'online' },
+          { id: 3, name: 'FreddyFazz', status: 'online' },
+          { id: 4, name: 'JoeMama', status: 'online' },
+          { id: 5, name: 'CEOofGame', status: 'away' },
+          { id: 6, name: 'BattleShip1', status: 'offline' },
         ]
       };
     }
