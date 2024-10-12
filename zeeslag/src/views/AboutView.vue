@@ -1,24 +1,22 @@
 <template>
-  <div class="game-menu relative flex flex-col items-center">
-    <!-- Game Header -->
-    <GameHeaderComponent />
-
-    <!-- Friends List -->
-    <div class="mt-6 w-full max-w-4xl">
+  <div class="game-menu flex-col flex items-center">
+    <div>
+      <GameHeaderComponent />
+    </div>
+    
+    <div class="flex gap-10">
+      <div class="mt-6 w-full max-w-4xl">
       <FriendsListComponent />
     </div>
 
-    <!-- Patch Notes Section -->
     <div class="mt-6 w-full max-w-4xl">
       <PatchNotesComponent />
     </div>
 
-    <!-- News Section -->
     <div class="mt-6 w-full max-w-4xl">
       <NewsComponent />
     </div>
-
-    <!-- Play Button -->
+    </div>
     <div class="mt-6 relative z-20">
       <PlayButtonComponent />
     </div>
@@ -30,7 +28,7 @@ import GameHeaderComponent from '@/components/GameHeaderComponent.vue';
 import FriendsListComponent from '@/components/FriendsListComponent.vue';
 import PlayButtonComponent from '@/components/PlayButtonComponent.vue';
 import PatchNotesComponent from '@/components/PatchNotesComponent.vue';
-import NewsComponent from '@/components/NewsComponent.vue';  // Importeer het NewsComponent
+import NewsComponent from '@/components/NewsComponent.vue';
 
 export default {
   components: {

@@ -1,9 +1,17 @@
 <template>
-    <div class="friends-list">
+    <div class="friends-list  bg-gray-800 p-4 text-white rounded-lg shadow-lg">
       <ul>
-        <li v-for="friend in friends" :key="friend.id">
+        <div class="flex flex-col gap-4">
+          <li  v-for="friend in friends" :key="friend.id">
+        
+          <div class="flex gap-4 items-center">
+            
+          <div class="rounded-full h-10 w-10 bg-green-400">
+          </div>
           {{ friend.name }} <span :class="friend.status"></span>
+          </div>
         </li>
+        </div>
       </ul>
     </div>
   </template>
@@ -27,7 +35,6 @@
   </script>
   
   <style scoped>
-  /* Stijl voor vriendenlijst */
   .in-game { color: green; }
   .online { color: blue; }
   .away { color: yellow; }
