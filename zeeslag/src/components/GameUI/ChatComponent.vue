@@ -1,17 +1,17 @@
 <template>
     <div class="bg-gray-800 p-4 rounded-md">
       <h2 class="font-bold mb-2">Chat</h2>
-      
+
       <!-- Scrollable chat messages container -->
-      <div 
-        ref="chatContainer" 
+      <div
+        ref="chatContainer"
         class="space-y-2 overflow-y-auto h-64 p-2 border border-gray-600 rounded-md"
       >
         <div v-for="(message, index) in chatMessages" :key="index" class="text-sm">
           <span :class="message.class">{{ message.user }}:</span> {{ message.text }}
         </div>
       </div>
-  
+
       <!-- Input form for adding a new chat message -->
       <div class="mt-4">
         <input
@@ -29,7 +29,7 @@
       </div>
     </div>
   </template>
-  
+
   <script>
   export default {
     name: "ChatComponent",
@@ -69,8 +69,7 @@
     }
   };
   </script>
-  
+
   <style scoped>
   /* Styling adjustments if needed */
   </style>
-  
