@@ -136,10 +136,10 @@ button:hover {
   font-size: 20px;
   width: 80%;
   text-align: center;
+}
 
   #hidden {
     display: none;
   }
 
-}
 </style>

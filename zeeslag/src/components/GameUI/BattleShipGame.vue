@@ -60,16 +60,17 @@ export default {
       turn: "P1", // could still be randomised when adding multiplayer
       score1: 0,
       score2: 0,
-      p1Moves: [],
-      p2Moves: [],
+      p1Moves: [], // list of all shots taken by player
+      p2Moves: [], // list of all shots taken by player
       p1Ships: [
+          //list of all ships to be used by the players.
         {name: "Carrier", size: 5, locations: [], placed: false},
         {name: "Battleship", size: 4, locations: [], placed: false},
         {name: "Cruiser", size: 3, locations: [], placed: false},
         {name: "Submarine", size: 3, locations: [], placed: false},
         {name: "Destroyer", size: 2, locations: [], placed: false}
       ],
-      p1Hits: [],
+      p1Hits: [], //list of all hits taken by the player.
       p2Ships: [
         {name: "Carrier", size: 5, locations: [], placed: false},
         {name: "Battleship", size: 4, locations: [], placed: false},
@@ -136,7 +137,7 @@ export default {
         if (this.player2Type === 'CPU') {
           // use setTimeout to create a delay before the CPU takes its turn, otherwise its your turn instantly after you took your turn again.
           setTimeout(() => {
-            this.cpuTakeTurn(); // Call the CPU action after a delay
+            this.cpuTakeTurn(); // call the CPU action after a delay
           }, 2000); // delay 2 seconds
         }
       } else {

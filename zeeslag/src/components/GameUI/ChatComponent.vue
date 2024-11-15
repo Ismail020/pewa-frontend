@@ -31,6 +31,8 @@
   </template>
 
   <script>
+  import { Client } from '@stomp/stompjs';
+  import SockJS from 'sockjs-client';
   export default {
     name: "ChatComponent",
     data() {
@@ -43,18 +45,18 @@
       };
     },
     methods: {
-      addMessage() {
-        if (this.newMessage.trim() !== "") {
-          // Add the new message to the chat log
-          this.chatMessages.push({
-            user: "You",  // Assuming the current user is 'You'
-            text: this.newMessage,
-            class: "text-green-400"  // Different color for the user's messages
-          });
-          this.newMessage = "";  // Clear the input field
-          this.scrollToBottom();  // Auto-scroll to the bottom after adding a new message
-        }
-      },
+      // addMessage() {
+      //   if (this.newMessage.trim() !== "") {
+      //     // Add the new message to the chat log
+      //     this.chatMessages.push({
+      //       user: "You",  // Assuming the current user is 'You'
+      //       text: this.newMessage,
+      //       class: "text-green-400"  // Different color for the user's messages
+      //     });
+      //     this.newMessage = "";  // Clear the input field
+      //     this.scrollToBottom();  // Auto-scroll to the bottom after adding a new message
+      //   }
+      // },
       scrollToBottom() {
         // Scroll the chat container to the bottom
         this.$nextTick(() => {
@@ -63,11 +65,17 @@
         });
       },
     },
-    mounted() {
+    beforeDestroy() {
+      if (this.client) {
+        this.client.deactivate();
+      }
+    },
+    mounted () {
       // Scroll to the bottom when the component is mounted
       this.scrollToBottom();
     }
   };
+
   </script>
 
   <style scoped>
