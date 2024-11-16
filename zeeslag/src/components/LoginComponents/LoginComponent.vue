@@ -45,7 +45,7 @@ export default {
 
 <template>
   <div class="background-container">
-    <div class="login-form">
+    <div class="register-form">
       <form @submit.prevent="login">
         <div id="upper-input" class="input">
           <input v-model="email"
@@ -89,7 +89,7 @@ export default {
   width: 100vw;
 }
 
-.login-form {
+.register-form {
   margin-top: 30px;
   display: flex;
   flex-direction: column;

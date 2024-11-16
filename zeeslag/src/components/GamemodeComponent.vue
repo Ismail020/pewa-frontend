@@ -1,9 +1,25 @@
 <template>
-  <div>
-    <button @click="startMatchmaking" id="matchMakingButton">Play against real players!</button>
-    <button @click="playAgainstBot" id="botGameButton">Play against a bot</button>
-  </div>
+  <div class="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white">
+    <h1 class="text-4xl font-bold mb-8">Choose Your Game Mode</h1>
 
+    <div class="space-y-4">
+      <button
+          @click="startMatchmaking"
+          id="matchMakingButton"
+          class="w-64 py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+      >
+        Play against real players!
+      </button>
+
+      <button
+          @click="playAgainstBot"
+          id="botGameButton"
+          class="w-64 py-3 px-6 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+      >
+        Play against a bot
+      </button>
+    </div>
+  </div>
 </template>
 
 <script>
