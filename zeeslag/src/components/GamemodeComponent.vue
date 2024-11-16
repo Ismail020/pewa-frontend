@@ -9,7 +9,7 @@
 <script>
 
 import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+// import { SockJS } from 'sockjs-client';
 export default {
   name: "GamemodeComponent",
   data () {
@@ -36,13 +36,21 @@ export default {
         connectHeaders: {}, // important keys like login, passcode, host
         onConnect: () => {
           this.isConnected = true;
+          console.log('Connected to game WebSocket');
+
         },
         onDisconnect: () => {
           this.isConnected = false;
+          console.log('Disconnected from game WebSocket');
+
         },
         onStompError: (frame) => {
           console.error(`Error: ${frame.header.message()}`)
+        },
+        onWebSocketError: (error) => {
+          console.error('WebSocket error:', error);  // More detailed WebSocket error log
         }
+
       });
       this.client.activate();
   },
