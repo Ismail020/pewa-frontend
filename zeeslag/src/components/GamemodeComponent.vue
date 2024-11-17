@@ -47,9 +47,15 @@ export default {
       this.connectToIngameChatWebSocket(); // attempts to create a session on the backend, in the hopes of being paired with another player session
     },
     connectToGameWebsocket() {
+      // retrieve token from storage
+      const token = localStorage.getItem('token');
+      console.log("The token is received: " + token);
+
       this.client = new Client({
         brokerURL: this.webSocketEndpoints.game, // url to where we connect for a session.
-        connectHeaders: {}, // important keys like login, passcode, host
+        connectHeaders: {
+          Authorization: `Bearer ${token}`
+        }, // important keys like login, passcode, host
         onConnect: () => {
           this.isConnected = true;
           console.log('Connected to game WebSocket');
@@ -70,7 +76,11 @@ export default {
       });
       this.client.activate();
   },
-    connectToIngameChatWebSocket() { // connects to chat websocket server.
+    connectToIngameChatWebSocket() {// connects to chat websocket server
+      //catch the token from Local Storage
+      const token = localStorage.getItem('token');
+      console.log("The token is received: " + token);
+
       this.client = new Client({
         brokerURL: this.webSocketEndpoints.ingame_chat,
         connectHeaders: {},
