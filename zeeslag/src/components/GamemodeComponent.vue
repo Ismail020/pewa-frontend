@@ -33,8 +33,8 @@ export default {
       client: null,
       isConnected: false,
       webSocketEndpoints: {
-        ingame_chat: 'ws://localhost:8080/ws/ingame_chat', // check if localhost:8080 is correct?
-        game: 'ws://localhost:8080/ws/game'
+        ingame_chat: "ws://localhost:8080/ws/ingame_chat", // check if localhost:8080 is correct?
+        game: "ws://localhost:8080/ws/game"
       }
     };
   },
@@ -79,8 +79,6 @@ export default {
     connectToIngameChatWebSocket() {// connects to chat websocket server
       //catch the token from Local Storage
       const token = localStorage.getItem('token');
-      console.log("The token is received: " + token);
-
       this.client = new Client({
         brokerURL: this.webSocketEndpoints.ingame_chat,
         connectHeaders: {},
