@@ -79,6 +79,7 @@ export default {
     connectToIngameChatWebSocket() {// connects to chat websocket server
       //catch the token from Local Storage
       const token = localStorage.getItem('token');
+
       this.client = new Client({
         brokerURL: this.webSocketEndpoints.ingame_chat,
         connectHeaders: {},
