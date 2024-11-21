@@ -1,33 +1,52 @@
 export class WebSocketAdaptor {
     socketUrl = null; // socket-url
     socket = null;  // new socket pending handshake of connection
-    handler = null;
 
-    constructor(socketUrl, handlerCB) {
-        const token = localStorage.getItem('token');
-        console.log("The token is received: " + token);
+    constructor(socketUrl, handlerCB, token) {
 
-        if (!token) {
-            throw new Error("Token not found in localstorage. Please log in");
-        }
+        socketUrl = `ws://localhost:8080/ws/chat`
 
         this.socketUrl = socketUrl;
-        this.handler = handlerCB;
-
         this.socketUrl = socketUrl.replace("http://", "ws://");
-        //this.socketUrl = socketUrl.replace("ws://","http://");
         //  this.socket = new SockJS(this.socketUrl);
-        this.connect();
     }
-    connect() {
-        this.socket = new WebSocket(this.socketUrl);
 
-        this.socket.onopen = () => console.log("Open socket");
-        this.socket.onmessage = (msg) => handlerCB(msg.data);
-        this.socket.onerror = (err) => console.log(err);
-        this.socket.onclose = () => console.log("Closed socket");
+    async authenticateAndConnect() {
+        const authUrl = "http://localhost:8080/api/v1/auth/authenticate"
+        const token = localStorage.getItem("token")
+        try {
+            const response = await fetch(authUrl, {
+                method: "POST",
+                headers:
+                    {
+                        "Authorization": `Bearer ${token}`
+                    }
+            })
 
-        console.log(`Created announcements adaptor on ${this.socketUrl}`);
+            console.log("The token is received: " + token);
+            if (!token) {
+                throw new Error("Token not found in localstorage. Please log in");
+            }
+
+            if (response.ok) {
+                this.socket = new WebSocket(this.socketUrl);
+
+                this.socket.onopen = () => console.log("Open socket");
+                this.socket.onmessage = (msg) => handlerCB(msg.data);
+                this.socket.onerror = (err) => console.log(err);
+                this.socket.onclose = () => console.log("WebSocket connection closed");
+
+                console.log(`Created announcements adaptor on ${this.socketUrl}`);
+
+                return this.socket;
+            } else {
+                console.error("Authentication failed");
+                return null
+            }
+        } catch (error) {
+            console.error("Error during authentication: ", error)
+            return null;
+        }
     }
 
     sendMessage(message) {

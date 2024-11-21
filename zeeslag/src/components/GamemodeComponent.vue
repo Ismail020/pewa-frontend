@@ -24,14 +24,15 @@
 
 <script>
 
-import { Client } from '@stomp/stompjs';
+import {WebSocketAdaptor} from "@/WebSocketAdaptor.js";
 // import { SockJS } from 'sockjs-client';
 export default {
   name: "GamemodeComponent",
-  data () {
+  data() {
     return {
-      client: null,
+      webSocketAdaptor: null,
       isConnected: false,
+      messages: [],
       webSocketEndpoints: {
         ingame_chat: "ws://localhost:8080/ws/ingame_chat", // check if localhost:8080 is correct?
         game: "ws://localhost:8080/ws/game"
@@ -39,84 +40,44 @@ export default {
     };
   },
   methods: {
-    playAgainstBot () {
+    playAgainstBot() {
       this.$router.push({path: "/play"})
     },
-    startMatchmaking () {
+    startMatchmaking() {
       this.connectToGameWebsocket(); // attempts to create a session on the backend, in the hopes of being paired with another player session
-      this.connectToIngameChatWebSocket(); // attempts to create a session on the backend, in the hopes of being paired with another player session
     },
-    connectToGameWebsocket() {
-      // retrieve token from storage
-      const token = localStorage.getItem('token');
-      console.log("The token is received: " + token);
-
-      this.client = new Client({
-        brokerURL: this.webSocketEndpoints.game, // url to where we connect for a session.
-        connectHeaders: {
-          Authorization: `Bearer ${token}`
-        }, // important keys like login, passcode, host
-        onConnect: () => {
+    async connectToGameWebsocket() {
+      if (this.webSocketAdaptor) {
+        console.log("Already connected")
+        return
+      }
+      try {
+        const handlerCB = (data) => {
+          this.messages.push(data);
+        };
+        this.webSocketAdaptor = new WebSocketAdaptor(
+            "ws://localhost:8080/ws/game",
+            handlerCB
+        );
+        const socket = await this.webSocketAdaptor.authenticateAndConnect();
+        if (socket) {
           this.isConnected = true;
-          console.log('Connected to game WebSocket');
-
-        },
-        onDisconnect: () => {
-          this.isConnected = false;
-          console.log('Disconnected from game WebSocket');
-
-        },
-        onStompError: (frame) => {
-          console.error(`Error: ${frame.header.message()}`)
-        },
-        onWebSocketError: (error) => {
-          console.error('WebSocket error:', error);  // More detailed WebSocket error log
+          console.log("Websocket connection established")
+        } else {
+          console.error("Websocket connection failed")
         }
-
-      });
-      this.client.activate();
-  },
-    connectToIngameChatWebSocket() {// connects to chat websocket server
-      //catch the token from Local Storage
-      const token = localStorage.getItem('token');
-
-      this.client = new Client({
-        brokerURL: this.webSocketEndpoints.ingame_chat,
-        connectHeaders: {},
-        onConnect: () => {
-          console.log('Connected to ingame-chat WebSocket');
-        },
-        onDisconnect: () => {
-          console.log('Disconnected from ingame-chat WebSocket');
-        },
-      });
-
-      this.client.activate();
+      } catch (error) {
+        console.error("Error connecting to websocket: ", error)
+      }
     },
+
     sendMessageToGame(message) {
-      if (this.client && this.isConnected) {
-        this.client.publish({
-          destination: '/ws/game',
-          body: message
-        });
+      if (this.webSocketAdaptor) {
+        this.webSocketAdaptor.sendMessage(message);
       }
     },
-    sendChatMessage(message) {
-      if (this.client && this.isConnected) {
-        this.client.publish({
-          destination: '/ws/ingame_chat',
-          body: message,
-        });
-      }
-    },
-    beforeDestroy() {
-      if (this.client) {
-        this.client.deactivate();
-      }
-    }
   }
 }
-
 
 
 </script>
