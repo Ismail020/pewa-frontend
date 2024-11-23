@@ -12,7 +12,7 @@ export class WebSocketAdaptor {
     }
 
     async authenticateAndConnect() {
-        const authUrl = "http://localhost:8080/api/v1/auth/authenticate"
+        const authUrl = "http://localhost:8080/api/auth/authentication"
         const token = localStorage.getItem("token")
         try {
             const response = await fetch(authUrl, {
