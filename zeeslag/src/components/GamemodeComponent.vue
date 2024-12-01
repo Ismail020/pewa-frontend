@@ -25,7 +25,6 @@
 <script>
 
 import { Client } from '@stomp/stompjs';
-// import { SockJS } from 'sockjs-client';
 export default {
   name: "GamemodeComponent",
   data () {
@@ -44,11 +43,11 @@ export default {
     },
     startMatchmaking () {
       this.connectToGameWebsocket(); // attempts to create a session on the backend, in the hopes of being paired with another player session
-      this.connectToIngameChatWebSocket(); // attempts to create a session on the backend, in the hopes of being paired with another player session
+      //this.connectToIngameChatWebSocket(); // attempts to create a session on the backend, in the hopes of being paired with another player session
     },
     connectToGameWebsocket() {
-      // retrieve token from storage
       const token = localStorage.getItem('token');
+      // retrieve token from storage
       console.log("The token is received: " + token);
 
       this.client = new Client({
@@ -59,6 +58,8 @@ export default {
         onConnect: () => {
           this.isConnected = true;
           console.log('Connected to game WebSocket');
+          this.subscribe("/topic");
+          this.publish("/app", {}, "I am finally connecting")
 
         },
         onDisconnect: () => {
@@ -74,6 +75,7 @@ export default {
         }
 
       });
+      console.log("Connect headers:", this.client.connectHeaders);
       this.client.activate();
   },
     connectToIngameChatWebSocket() {// connects to chat websocket server
