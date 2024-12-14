@@ -23,76 +23,102 @@
 </template>
 
 <script>
+import {Client} from '@stomp/stompjs';
+import { jwtDecode } from "jwt-decode";
 
-import { Client } from '@stomp/stompjs';
 export default {
   name: "GamemodeComponent",
-  data () {
+  data() {
     return {
       client: null,
       isConnected: false,
-      webSocketEndpoints: {
-        ingame_chat: "ws://localhost:8080/ws/ingame_chat", // check if localhost:8080 is correct?
-        game: "ws://localhost:8080/ws/game"
-      }
+      gameEndPoint: "ws://localhost:8080/ws/game",
+      username: null,
     };
   },
   methods: {
-    playAgainstBot () {
+    playAgainstBot() {
       this.$router.push({path: "/play"})
     },
-    startMatchmaking () {
-      this.connectToGameWebsocket(); // attempts to create a session on the backend, in the hopes of being paired with another player session
-      //this.connectToIngameChatWebSocket(); // attempts to create a session on the backend, in the hopes of being paired with another player session
-    },
-    connectToGameWebsocket() {
+    startMatchmaking() {
       const token = localStorage.getItem('token');
       // retrieve token from storage
-      console.log("The token is received: " + token);
+      console.log("Starting matchmaking with token: " + token);
+      //decode the username from the token to be later used for user-specific channel subscriptions
+      try {
+        const decodedToken = jwtDecode(token);
+        console.log("Decoded token is : " + decodedToken)
+        this.username = decodedToken.sub;
+        console.log("Decoded username is: ", this.username);
+      } catch (error) {
+        console.error("Failed to decode token: ", error)
+      }
 
       this.client = new Client({
-        brokerURL: this.webSocketEndpoints.game, // url to where we connect for a session.
+        brokerURL: this.gameEndPoint, // url to where we connect for a session.
         connectHeaders: {
           Authorization: `Bearer ${token}`
-        }, // important keys like login, passcode, host
-        onConnect: () => {
-          this.isConnected = true;
-          console.log('Connected to game WebSocket');
-          this.subscribe("/topic");
-          this.publish("/app", {}, "I am finally connecting")
-
         },
-        onDisconnect: () => {
-          this.isConnected = false;
-          console.log('Disconnected from game WebSocket');
-
-        },
-        onStompError: (frame) => {
-          console.error(`Error: ${frame.header.message()}`)
-        },
-        onWebSocketError: (error) => {
-          console.error('WebSocket error:', error);  // More detailed WebSocket error log
-        }
-
-      });
-      console.log("Connect headers:", this.client.connectHeaders);
-      this.client.activate();
-  },
-    connectToIngameChatWebSocket() {// connects to chat websocket server
-      //catch the token from Local Storage
-      const token = localStorage.getItem('token');
-      this.client = new Client({
-        brokerURL: this.webSocketEndpoints.ingame_chat,
-        connectHeaders: {},
-        onConnect: () => {
-          console.log('Connected to ingame-chat WebSocket');
-        },
-        onDisconnect: () => {
-          console.log('Disconnected from ingame-chat WebSocket');
-        },
+        onConnect: this.onWebSocketConnect.bind(this),
+        onDisconnect: this.onWebSocketDisconnect.bind(this),
+        onStompError: this.onStompError,
+        onWebSocketError: this.onWebSocketError,
       });
 
+      console.log('WebSocket client: ', this.client);
+
       this.client.activate();
+      console.log('WebSocket client status: ', this.client.active);
+    },
+
+    onWebSocketConnect() {
+      this.isConnected = true;
+      console.log('Connected to game WebSocket');
+
+      if (!this.client || !this.client.connected) {
+        console.error('WebSocket client is not connected!');
+        return;
+      }
+
+      this.client.publish({
+        destination: "/app/start",
+        body: JSON.stringify({gameType: "player-vs-player"}),
+      });
+      console.log(`Subscribing to: /user/${this.username}/queue/game`);
+
+
+      try {
+        this.client.subscribe('/user/queue/game', (message) => {
+          if (message && message.body) {
+            console.log('Received message: ', message.body);
+          } else {
+            console.error("No message body received");
+          }
+        });
+        console.log('Subscribed to /user/queue/game');
+        this.$router.push({path: '/play'});
+      } catch (error) {
+        console.error('Subscription failed: ', error);
+      }
+
+    },
+
+    onWebSocketDisconnect() {
+      this.isConnected = false;
+      console.log('Disconnected from game WebSocket');
+    }
+    ,
+    // onStompError(frame) {
+    //   console.error(Stomp Error: ${frame.header.message()})
+    // },
+    onWebSocketError(error) {
+      console.error('WebSocket error:', error);
+    },
+
+    beforeDestroy() {
+      if (this.client) {
+        this.client.deactivate();
+      }
     },
     sendMessageToGame(message) {
       if (this.client && this.isConnected) {
@@ -101,7 +127,8 @@ export default {
           body: message
         });
       }
-    },
+    }
+    ,
     sendChatMessage(message) {
       if (this.client && this.isConnected) {
         this.client.publish({
@@ -109,16 +136,9 @@ export default {
           body: message,
         });
       }
-    },
-    beforeDestroy() {
-      if (this.client) {
-        this.client.deactivate();
-      }
     }
   }
 }
-
-
 
 </script>
 
