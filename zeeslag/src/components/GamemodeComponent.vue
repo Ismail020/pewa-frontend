@@ -23,123 +23,84 @@
 </template>
 
 <script>
-import {Client} from '@stomp/stompjs';
+import WebSocketService from "@/stores/WebSocketService.js";
 import { jwtDecode } from "jwt-decode";
 
 export default {
   name: "GamemodeComponent",
   data() {
     return {
-      client: null,
-      isConnected: false,
+      webSocketService: null,
       gameEndPoint: "ws://localhost:8080/ws/game",
-      username: null,
+      username: null
     };
   },
   methods: {
     playAgainstBot() {
-      this.$router.push({path: "/play"})
+      // Navigate to the play against bot page
+      this.$router.push({ path: "/play" });
     },
+
     startMatchmaking() {
-      const token = localStorage.getItem('token');
-      // retrieve token from storage
+      const token = localStorage.getItem("token"); // Get token from localStorage
       console.log("Starting matchmaking with token: " + token);
-      //decode the username from the token to be later used for user-specific channel subscriptions
+
       try {
         const decodedToken = jwtDecode(token);
-        console.log("Decoded token is : " + decodedToken)
-        this.username = decodedToken.sub;
-        console.log("Decoded username is: ", this.username);
+        console.log("Decoded token: ", decodedToken);
+        this.username = decodedToken.sub; // Extract the username from token
+        console.log("Decoded username: ", this.username);
       } catch (error) {
-        console.error("Failed to decode token: ", error)
+        console.error("Failed to decode token: ", error);
       }
 
-      this.client = new Client({
-        brokerURL: this.gameEndPoint, // url to where we connect for a session.
-        connectHeaders: {
-          Authorization: `Bearer ${token}`
-        },
-        onConnect: this.onWebSocketConnect.bind(this),
-        onDisconnect: this.onWebSocketDisconnect.bind(this),
-        onStompError: this.onStompError,
-        onWebSocketError: this.onWebSocketError,
-      });
+      this.webSocketService = new WebSocketService(this.gameEndPoint, token);
 
-      console.log('WebSocket client: ', this.client);
-
-      this.client.activate();
-      console.log('WebSocket client status: ', this.client.active);
+      this.webSocketService.connect(
+          this.handleWebSocketConnect,
+          this.handleWebSocketDisconnect,
+          this.handleWebSocketError
+      );
     },
 
-    onWebSocketConnect() {
-      this.isConnected = true;
-      console.log('Connected to game WebSocket');
+    handleWebSocketConnect(username) {
+      console.log("Connected as ", username);
 
-      if (!this.client || !this.client.connected) {
-        console.error('WebSocket client is not connected!');
-        return;
-      }
-
-      this.client.publish({
-        destination: "/app/start",
-        body: JSON.stringify({gameType: "player-vs-player"}),
-      });
+      // Send start message to the WebSocket server
+      this.webSocketService.sendMessage("/app/start", {});
       console.log(`Subscribing to: /user/${this.username}/queue/game`);
 
+      // Subscribe to game messages for the user
+      this.webSocketService.subscribe('/user/queue/game', this.handleGameMessage);
+    },
 
+    handleWebSocketDisconnect() {
+      console.log("Disconnected from WebSocket");
+    },
+
+    handleWebSocketError(error) {
+      console.error("WebSocket error:", error);
+    },
+
+    handleGameMessage(message) {
+      console.log("Received message:", message);
+
+      let gameData;
       try {
-        this.client.subscribe('/user/queue/game', (message) => {
-          if (message && message.body) {
-            console.log('Received message: ', message.body);
-          } else {
-            console.error("No message body received");
-          }
-        });
-        console.log('Subscribed to /user/queue/game');
-        this.$router.push({path: '/play'});
-      } catch (error) {
-        console.error('Subscription failed: ', error);
+        gameData = JSON.parse(message); // Parse the received message
+      } catch (e) {
+        console.log("Error parsing message: ", e);
       }
 
-    },
-
-    onWebSocketDisconnect() {
-      this.isConnected = false;
-      console.log('Disconnected from game WebSocket');
-    }
-    ,
-    // onStompError(frame) {
-    //   console.error(Stomp Error: ${frame.header.message()})
-    // },
-    onWebSocketError(error) {
-      console.error('WebSocket error:', error);
-    },
-
-    beforeDestroy() {
-      if (this.client) {
-        this.client.deactivate();
-      }
-    },
-    sendMessageToGame(message) {
-      if (this.client && this.isConnected) {
-        this.client.publish({
-          destination: '/ws/game',
-          body: message
-        });
-      }
-    }
-    ,
-    sendChatMessage(message) {
-      if (this.client && this.isConnected) {
-        this.client.publish({
-          destination: '/ws/ingame_chat',
-          body: message,
-        });
+      if (gameData && gameData.player1 && gameData.player2) {
+        console.log("Game started with data:", gameData);
+        this.$router.push({ path: "/play" });
+      } else {
+        console.error("Invalid game data received:", gameData);
       }
     }
   }
-}
-
+};
 </script>
 
 <style scoped>
