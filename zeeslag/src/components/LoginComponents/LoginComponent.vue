@@ -29,12 +29,12 @@ export default {
               throw new Error(`Server response was ${response.status}.`)
             }
             //handle positive server response - redirect further to play page
-            this.$router.push({path: "/play"})
+            this.$router.push({path: "/selectgamemode"})
             return response.json();
           })
           .then((data) => {
-            //preserve the token for possible future use with pinja
-            const token = data.token;
+            //preserve the token
+            localStorage.setItem("token", data.token);
           })
           .catch((error => console.error(error)))
     }
@@ -45,7 +45,7 @@ export default {
 
 <template>
   <div class="background-container">
-    <div class="login-form">
+    <div class="register-form">
       <form @submit.prevent="login">
         <div id="upper-input" class="input">
           <input v-model="email"
@@ -89,7 +89,7 @@ export default {
   width: 100vw;
 }
 
-.login-form {
+.register-form {
   margin-top: 30px;
   display: flex;
   flex-direction: column;
@@ -136,10 +136,10 @@ button:hover {
   font-size: 20px;
   width: 80%;
   text-align: center;
+}
 
   #hidden {
     display: none;
   }
 
-}
 </style>

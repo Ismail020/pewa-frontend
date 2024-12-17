@@ -15,7 +15,7 @@
                 </li>
                 <!-- Play Now link -->
                 <li>
-                    <RouterLink to="/play" class="text-white hover:text-gray-400">Play Now</RouterLink>
+                    <RouterLink to="/selectgamemode" class="text-white hover:text-gray-400">Play now</RouterLink>
                 </li>
             </div>
             <!-- Right-aligned items container -->
