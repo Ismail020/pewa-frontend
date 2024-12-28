@@ -57,6 +57,7 @@
 </template>
 
 <script>
+import CONFIG from "@/config.js";
 export default {
   name: "RegisterComponent",
   data() {
@@ -70,7 +71,7 @@ export default {
   methods: {
     // Register method
     register() {
-      const url = "http://localhost:8080/api/v1/auth/register";  // Adjust URL if needed
+      const url = "http://"+CONFIG.backendUrl+"/api/v1/auth/register";  // Adjust URL if needed
       fetch(url, {
         method: "POST",
         headers: {

@@ -1,4 +1,6 @@
 <script>
+import CONFIG from "@/config.js";
+
 export default {
   name: "LoginComponent",
   data() {
@@ -11,7 +13,7 @@ export default {
   methods: {
     //send POST request with email and password
     login() {
-      const url = "http://localhost:8080/api/v1/auth/authenticate";
+      const url = "http://"+CONFIG.backendUrl+"/api/v1/auth/authenticate";
       fetch(url, {
         method: "POST",
         headers: {

@@ -25,13 +25,14 @@
 <script>
 import WebSocketService from "@/stores/WebSocketService.js";
 import { jwtDecode } from "jwt-decode";
+import CONFIG from "@/config.js";
 
 export default {
   name: "GamemodeComponent",
   data() {
     return {
       webSocketService: null,
-      gameEndPoint: "ws://localhost:8080/ws/game",
+      gameEndPoint: "ws://"+CONFIG.backendUrl+"/ws/game",
       username: null
     };
   },
