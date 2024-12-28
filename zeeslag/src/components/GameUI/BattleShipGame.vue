@@ -44,8 +44,13 @@ import LogComponent from './LogComponent.vue';
 import BoardComponent from './BoardComponent.vue';
 import ChatComponent from './ChatComponent.vue';
 
+
+
 export default {
   name: "BattleshipGame",
+  props: {
+    webSocketService: Object,  // Receive the WebSocket service from the parent
+  },
   components: {
     HeaderComponent,
     LogComponent,
@@ -54,6 +59,7 @@ export default {
   },
   data() {
     return {
+      wsService:  null,
       player1: "xX_sampleUsername123_Xx",
       player2: "xX_sampleUsername345_Xx",
       round: 1, //starts at round 1, goes up per turn done by player 2. could still be changed for if the first player to start is random.
@@ -92,27 +98,33 @@ export default {
       player2Type: 'CPU',
     };
   },
+  mounted () {
+  },
   methods: {
     //method which is activated in the event that all ships have been placed from the player's side.
     //needs to be fleshed out more still in case player is a real player.
     handleAllShipsPlaced(player) {
+
       if (player === 'p1') {
         this.p1Phase = 'gameplay'; // change phase to gameplay for P1
         // if P2 is CPU, randomize their ship placement
+
         if (this.player2Type === 'CPU') {
           // searches the game's references for the p2 board property (see 2nd board html element)
           // if player2 is a cpu, they don't get to decide their own board. thus it must be placed randomly.
           this.$refs.p2Board.randomizeShipPlacement();
 
         }
+        this.webSocketService.sendMessage("/app/ships-placed", this.p1Ships);
+
       } else if (player === 'p2') {
         //needs to be fleshed out still, for now
         this.p2Phase = 'gameplay';
+        this.webSocketService.sendMessage("/app/ships-placed", this.p2Ships)
       }
 
       // check if both players are ready to start (boards are set up).
       if (this.p1Phase === 'gameplay' && this.p2Phase === 'gameplay') {
-        console.log("Both players are ready. Starting the game!");
         this.startGame();
       }
     },
@@ -124,15 +136,12 @@ export default {
       this.score2 = 0;
       this.p1Moves = [];
       this.p2Moves = [];
-      console.log("Turn starts with: " + this.turn);
     },
 
     // manages turn logic. Activates after the current turn is still for player1, but the player's made their move.
     switchTurn() {
-      console.log("Switching turn from:" + this.turn);
       if (this.turn === "P1") {
         this.turn = "P2";
-        console.log("Now it's P2's turn.");
         // start cpu action if it's the CPU's turn
         if (this.player2Type === 'CPU') {
           // use setTimeout to create a delay before the CPU takes its turn, otherwise its your turn instantly after you took your turn again.
@@ -144,7 +153,6 @@ export default {
         // switch back to player1, rounds continue.
         this.turn = "P1";
         this.round++
-        console.log("Now it's P1's turn.");
       }
     },
 

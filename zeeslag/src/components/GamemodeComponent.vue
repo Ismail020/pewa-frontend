@@ -19,11 +19,15 @@
         Play against a bot
       </button>
     </div>
+
+    <!-- Conditionally render BattleshipGame component -->
+    <BattleshipGame v-if="gameStarted" :webSocketService="webSocketService" />
   </div>
 </template>
 
 <script>
 import WebSocketService from "@/stores/WebSocketService.js";
+import BattleshipGame from "./GameUI/BattleShipGame.vue"; // Adjusted import path
 import { jwtDecode } from "jwt-decode";
 import CONFIG from "@/config.js";
 
@@ -33,8 +37,12 @@ export default {
     return {
       webSocketService: null,
       gameEndPoint: "ws://"+CONFIG.backendUrl+"/ws/game",
-      username: null
+      username: null,
+      gameStarted: false,  // Control the game start status
     };
+  },
+  components: {
+    BattleshipGame,  // Register the BattleshipGame component
   },
   methods: {
     playAgainstBot() {
@@ -95,7 +103,7 @@ export default {
 
       if (gameData && gameData.player1 && gameData.player2) {
         console.log("Game started with data:", gameData);
-        this.$router.push({ path: "/play" });
+        this.gameStarted = true;  // Update to show BattleshipGame component
       } else {
         console.error("Invalid game data received:", gameData);
       }
@@ -105,5 +113,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
