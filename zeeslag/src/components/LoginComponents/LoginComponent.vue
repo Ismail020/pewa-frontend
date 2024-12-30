@@ -3,24 +3,40 @@ export default {
   name: "LoginComponent",
   data() {
     return {
-      username: '',
-      password: ''
+      email: '',
+      password: '',
+      show: false,
     }
   },
   methods: {
+    //send POST request with email and password
     login() {
-      const url = "";
+      const url = "http://localhost:8080/api/v1/auth/authenticate";
       fetch(url, {
         method: "POST",
         headers: {
           'Content-type': 'application/json'
         },
         body: JSON.stringify({
-          username: this.username,
+          email: this.email,
           password: this.password
         })
       })
-          .then((response) => response.json())
+          //handle negative server response: show the hidden text with a link to the registration page
+          .then((response) => {
+            if (!response.ok) {
+              this.show = true;
+              throw new Error(`Server response was ${response.status}.`)
+            }
+            //handle positive server response - redirect further to play page
+            this.$router.push({path: "/selectgamemode"})
+            return response.json();
+          })
+          .then((data) => {
+            //preserve the token
+            localStorage.setItem("token", data.token);
+          })
+          .catch((error => console.error(error)))
     }
   }
 };
@@ -29,13 +45,13 @@ export default {
 
 <template>
   <div class="background-container">
-    <div class="login-form">
+    <div class="register-form">
       <form @submit.prevent="login">
         <div id="upper-input" class="input">
-          <input v-model="username"
-                 id="username"
+          <input v-model="email"
+                 id="email"
                  type="text"
-                 placeholder="Username"
+                 placeholder="email"
                  required/>
         </div>
         <div class="input">
@@ -45,14 +61,18 @@ export default {
                  placeholder="Password"
                  required/>
         </div>
+
         <div class="input">
           <button type="submit">LOGIN</button>
         </div>
+        <div id="hidden" v-if="show">No user could be found.
+          <RouterLink to="/register">Register now!</RouterLink>
+        </div>
+        <div class="input">
+          <span id="account">Don't have an account?</span>
+          <span id="register"> <router-link to="/register"> Register! </router-link></span>
+        </div>
       </form>
-      <div class="input">
-        <span id="account">Don't have an account?</span>
-        <span id="register"> <router-link to="/register"> Register! </router-link></span>
-      </div>
     </div>
   </div>
 </template>
@@ -69,7 +89,7 @@ export default {
   width: 100vw;
 }
 
-.login-form {
+.register-form {
   margin-top: 30px;
   display: flex;
   flex-direction: column;
@@ -111,11 +131,15 @@ button:hover {
   padding-top: 60px;
 }
 
-#password, #username {
+#password, #email {
   padding: 10px;
   font-size: 20px;
   width: 80%;
   text-align: center;
-
 }
+
+  #hidden {
+    display: none;
+  }
+
 </style>

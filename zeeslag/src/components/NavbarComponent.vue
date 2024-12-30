@@ -1,6 +1,6 @@
 <template>
     <!-- Navbar container with background color and padding -->
-    <nav class="bg-gray-800 p-4">
+    <nav class="bg-gray-700 p-4">
         <!-- Flex container to space out the left and right sections -->
         <ul class="flex justify-between w-full">
             <!-- Left-aligned items container -->
@@ -15,7 +15,7 @@
                 </li>
                 <!-- Play Now link -->
                 <li>
-                    <RouterLink to="/play" class="text-white hover:text-gray-400">Play Now</RouterLink>
+                    <RouterLink to="/selectgamemode" class="text-white hover:text-gray-400">Play now</RouterLink>
                 </li>
             </div>
             <!-- Right-aligned items container -->

@@ -1,6 +1,5 @@
 <template>
   <div class="login-container">
-  <HeaderComponent  class ="header"/>
  <LoginComponent class="login"/>
   </div>
 </template>
