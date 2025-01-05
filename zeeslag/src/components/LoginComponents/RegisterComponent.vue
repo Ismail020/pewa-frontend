@@ -3,6 +3,26 @@
     <h1 class="text-4xl font-bold mb-8">Register</h1>
 
     <div class="space-y-4 w-96">
+      <!-- Avatar Selection -->
+      <div class="input-group">
+        <h2 class="text-lg font-semibold mb-2">Select an Avatar</h2>
+        <div class="flex space-x-4 justify-center">
+
+          <img
+              v-for="(avatar, index) in avatars"
+              :key="index"
+              :src="avatar"
+              :alt="`Avatar ${index + 1}`"
+              class="w-16 h-16 rounded-full cursor-pointer border-2 transition duration-300"
+              :class="{
+              'selected-avatar': selectedAvatar === avatar,
+              'unselected-avatar': selectedAvatar !== avatar,
+            }"
+              @click="selectAvatar(avatar)"
+          />
+        </div>
+      </div>
+
       <!-- Name Input -->
       <div class="input-group">
         <input v-model="name"
@@ -58,6 +78,9 @@
 
 <script>
 import CONFIG from "@/config.js";
+import womanImage from "@/assets/images/woman.png";
+import maleImage from "@/assets/images/man.png";
+
 export default {
   name: "RegisterComponent",
   data() {
@@ -66,9 +89,17 @@ export default {
       email: '',
       password: '',
       show: false,
+      avatars: [
+        womanImage,
+        maleImage
+      ],
+      selectedAvatar: null,
     };
   },
   methods: {
+    selectAvatar(avatar) {
+      this.selectedAvatar = avatar;
+    },
     // Register method
     register() {
       const url = "http://"+CONFIG.backendUrl+"/api/v1/auth/register";  // Adjust URL if needed
@@ -81,6 +112,7 @@ export default {
           name: this.name,
           email: this.email,
           password: this.password,
+          avatar: this.selectedAvatar,
         }),
       })
           .then((response) => {
@@ -191,5 +223,18 @@ export default {
 
 .mt-4 {
   margin-top: 1rem;
+}
+
+.selected-avatar {
+  border-color: #4e60d5; /* Same blue as input focus */
+}
+
+.unselected-avatar {
+  border-color: #ddd; /* Gray for unselected */
+}
+
+img {
+  border-width: 2px;
+  transition: border-color 0.3s ease-in-out;
 }
 </style>
