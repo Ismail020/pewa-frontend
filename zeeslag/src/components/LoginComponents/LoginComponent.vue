@@ -28,8 +28,8 @@ export default {
         }
 
         const data = await response.json();
-        localStorage.setItem("authToken", data.token);
-        this.$router.push({path: "/play"})
+        localStorage.setItem("token", data.token);
+        this.$router.push({path: "/selectgamemode"})
       } catch (error) {
         this.errorMessage = "Invalid login credentials. Please try again.";
       }
@@ -40,7 +40,7 @@ export default {
 
 <template>
   <div class="background-container">
-    <div class="login-form">
+    <div class="register-form">
       <form @submit.prevent="login">
         <div id="upper-input" class="input">
           <input v-model="email" id="email" type="email" placeholder="Email" required />
@@ -76,7 +76,7 @@ export default {
   width: 100vw;
 }
 
-.login-form {
+.register-form {
   margin-top: 30px;
   display: flex;
   flex-direction: column;
@@ -117,10 +117,15 @@ button:hover {
   padding-top: 60px;
 }
 
-#password, #email {
+#password,
+#email {
   padding: 10px;
   font-size: 20px;
   width: 100%;
   text-align: center;
+}
+
+#hidden {
+  display: none;
 }
 </style>
