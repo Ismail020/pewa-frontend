@@ -8,56 +8,44 @@
         <h2 class="text-lg font-semibold mb-2">Select an Avatar</h2>
         <div class="flex space-x-4 justify-center">
 
-          <img
-              v-for="(avatar, index) in avatars"
-              :key="index"
-              :src="avatar"
-              :alt="`Avatar ${index + 1}`"
-              class="w-16 h-16 rounded-full cursor-pointer border-2 transition duration-300"
-              :class="{
+          <img v-for="(avatar, index) in avatars" :key="index" :src="avatar" :alt="`Avatar ${index + 1}`"
+            class="w-16 h-16 rounded-full cursor-pointer border-2 transition duration-300" :class="{
               'selected-avatar': selectedAvatar === avatar,
               'unselected-avatar': selectedAvatar !== avatar,
-            }"
-              @click="selectAvatar(avatar)"
-          />
+            }" @click="selectAvatar(avatar)" />
         </div>
       </div>
 
       <!-- Name Input -->
       <div class="input-group">
-        <input v-model="name"
-               id="name"
-               type="text"
-               placeholder="Name"
-               class="input-field"
-               required />
+        <input v-model="name" id="name" type="text" placeholder="Name" class="input-field" required />
       </div>
 
       <!-- Email Input -->
       <div class="input-group">
-        <input v-model="email"
-               id="email"
-               type="email"
-               placeholder="Email"
-               class="input-field"
-               required />
+        <input v-model="email" id="email" type="email" placeholder="Email" class="input-field" required />
       </div>
+
+      <!-- Country Selection -->
+      <div class="input-group">
+        <select v-model="location" class="input-field" required>
+          <option disabled value="">Select your country</option>
+          <option v-for="(country, index) in countries" :key="index" :value="country">
+            {{ country }}
+          </option>
+        </select>
+      </div>
+
 
       <!-- Password Input -->
       <div class="input-group">
-        <input v-model="password"
-               id="password"
-               type="password"
-               placeholder="Password"
-               class="input-field"
-               required />
+        <input v-model="password" id="password" type="password" placeholder="Password" class="input-field" required />
       </div>
 
       <!-- Register Button -->
       <div class="input-group">
-        <button @click="register"
-                id="registerButton"
-                class="w-full py-3 px-6 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+        <button @click="register" id="registerButton"
+          class="w-full py-3 px-6 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
           REGISTER
         </button>
       </div>
@@ -93,6 +81,16 @@ export default {
         maleImage
       ],
       selectedAvatar: null,
+      Location: '',
+      countries: [
+        'Netherlands',
+        'Germany',
+        'France',
+        'Belgium',
+        'United States',
+        'United Kingdom',
+
+      ],
     };
   },
   methods: {
@@ -112,22 +110,23 @@ export default {
           email: this.email,
           password: this.password,
           avatar: this.selectedAvatar,
+          location: this.location,
         }),
       })
-          .then((response) => {
-            if (!response.ok) {
-              this.show = true;
-              throw new Error(`Server response was ${response.status}`);
-            }
-            return response.json();  // On success, parse response
-          })
-          .then((data) => {
-            // Redirect to login page
-            this.$router.push({ path: "/login" });
-          })
-          .catch((error) => {
-            console.error(error);  // Log any error
-          });
+        .then((response) => {
+          if (!response.ok) {
+            this.show = true;
+            throw new Error(`Server response was ${response.status}`);
+          }
+          return response.json();  // On success, parse response
+        })
+        .then((data) => {
+          // Redirect to login page
+          this.$router.push({ path: "/login" });
+        })
+        .catch((error) => {
+          console.error(error);  // Log any error
+        });
     },
   },
 };
@@ -156,7 +155,8 @@ export default {
 }
 
 .bg-gray-800 {
-  background-color: #2d3748; /* Dark gray background */
+  background-color: #2d3748;
+  /* Dark gray background */
 }
 
 .text-white {
@@ -180,13 +180,15 @@ export default {
 }
 
 .input-field:focus {
-  border-color: #4e60d5; /* Light blue on focus */
+  border-color: #4e60d5;
+  /* Light blue on focus */
   outline: none;
 }
 
 /* Register Button */
 #registerButton {
-  background-color: #e53e3e; /* Red button */
+  background-color: #e53e3e;
+  /* Red button */
   color: white;
   text-align: center;
   font-size: 18px;
@@ -199,13 +201,16 @@ export default {
 }
 
 #registerButton:hover {
-  background-color: #c53030; /* Darker red on hover */
-  transform: scale(1.05); /* Slight scale on hover */
+  background-color: #c53030;
+  /* Darker red on hover */
+  transform: scale(1.05);
+  /* Slight scale on hover */
 }
 
 /* Error message */
 .error-message {
-  color: #e53e3e; /* Red text */
+  color: #e53e3e;
+  /* Red text */
   font-size: 16px;
   text-align: center;
   margin-top: 10px;
@@ -213,7 +218,8 @@ export default {
 
 /* Link Styling */
 .text-blue-500 {
-  color: #3182ce; /* Blue color */
+  color: #3182ce;
+  /* Blue color */
 }
 
 .font-semibold {
@@ -225,11 +231,13 @@ export default {
 }
 
 .selected-avatar {
-  border-color: #4e60d5; /* Same blue as input focus */
+  border-color: #4e60d5;
+  /* Same blue as input focus */
 }
 
 .unselected-avatar {
-  border-color: #ddd; /* Gray for unselected */
+  border-color: #ddd;
+  /* Gray for unselected */
 }
 
 img {
