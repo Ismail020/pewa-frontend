@@ -1,4 +1,4 @@
-<template>
+git <template>
     <!-- Navbar container with background color and padding -->
     <nav class="bg-gray-700 p-4">
         <!-- Flex container to space out the left and right sections -->

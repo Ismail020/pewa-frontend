@@ -1,4 +1,6 @@
 <script>
+import CONFIG from "@/config.js";
+
 export default {
   name: "LoginComponent",
   data() {
@@ -9,8 +11,9 @@ export default {
     };
   },
   methods: {
+    //send POST request with email and password
     async login() {
-      const url = `${import.meta.env.VITE_API_URL}/api/v1/auth/authenticate`;
+      const url = "http://"+CONFIG.backendUrl+"/api/v1/auth/authenticate";
       try {
         const response = await fetch(url, {
           method: "POST",
