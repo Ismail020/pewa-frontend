@@ -1,78 +1,66 @@
 <script>
+import CONFIG from "@/config.js";
+
 export default {
   name: "LoginComponent",
   data() {
     return {
-      email: '',
-      password: '',
-      show: false,
-    }
+      email: "",
+      password: "",
+      errorMessage: null,
+    };
   },
   methods: {
     //send POST request with email and password
-    login() {
-      const url = "http://localhost:8080/api/v1/auth/authenticate";
-      fetch(url, {
-        method: "POST",
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: this.email,
-          password: this.password
-        })
-      })
-          //handle negative server response: show the hidden text with a link to the registration page
-          .then((response) => {
-            if (!response.ok) {
-              this.show = true;
-              throw new Error(`Server response was ${response.status}.`)
-            }
-            //handle positive server response - redirect further to play page
-            this.$router.push({path: "/play"})
-            return response.json();
-          })
-          .then((data) => {
-            //preserve the token for possible future use with pinja
-            const token = data.token;
-          })
-          .catch((error => console.error(error)))
-    }
-  }
-};
+    async login() {
+      const url = "http://"+CONFIG.backendUrl+"/api/v1/auth/authenticate";
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            email: this.email,
+            password: this.password,
+          }),
+        });
 
+        if (!response.ok) {
+          throw new Error("Login failed!");
+        }
+
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        this.$router.push({path: "/selectgamemode"})
+      } catch (error) {
+        this.errorMessage = "Invalid login credentials. Please try again.";
+      }
+    },
+  },
+};
 </script>
 
 <template>
   <div class="background-container">
-    <div class="login-form">
+    <div class="register-form">
       <form @submit.prevent="login">
         <div id="upper-input" class="input">
-          <input v-model="email"
-                 id="email"
-                 type="text"
-                 placeholder="email"
-                 required/>
+          <input v-model="email" id="email" type="email" placeholder="Email" required />
         </div>
         <div class="input">
-          <input v-model="password"
-                 id="password"
-                 type="password"
-                 placeholder="Password"
-                 required/>
+          <input v-model="password" id="password" type="password" placeholder="Password" required />
         </div>
-
         <div class="input">
           <button type="submit">LOGIN</button>
-        </div>
-        <div id="hidden" v-if="show">No user could be found.
-          <RouterLink to="/register">Register now!</RouterLink>
-        </div>
-        <div class="input">
-          <span id="account">Don't have an account?</span>
-          <span id="register"> <router-link to="/register"> Register! </router-link></span>
+          <div v-if="errorMessage" class="p-4 mb-4 text-sm text-red-800">{{ errorMessage }}</div>
         </div>
       </form>
+      <div class="input">
+        <span id="account">Don't have an account?</span>
+        <span id="register">
+          <router-link to="/register"> Register! </router-link></span>
+      </div>
     </div>
   </div>
 </template>
@@ -85,15 +73,16 @@ export default {
 }
 
 .background-container {
+  display: flex;
+  justify-content: center;
   background-color: #383B45;
   width: 100vw;
 }
 
-.login-form {
+.register-form {
   margin-top: 30px;
   display: flex;
   flex-direction: column;
-  max-width: 50vw;
   background-color: #F6F6F6;
   border-radius: 2px;
 }
@@ -131,15 +120,15 @@ button:hover {
   padding-top: 60px;
 }
 
-#password, #email {
+#password,
+#email {
   padding: 10px;
   font-size: 20px;
-  width: 80%;
+  width: 100%;
   text-align: center;
+}
 
-  #hidden {
-    display: none;
-  }
-
+#hidden {
+  display: none;
 }
 </style>

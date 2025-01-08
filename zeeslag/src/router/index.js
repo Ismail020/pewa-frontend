@@ -28,6 +28,11 @@ const router = createRouter({
       component: () => import('../views/RegisterView.vue'),
     },
     {
+      path: '/selectGamemode',
+      name: 'selectGamemode',
+      component: () => import('../views/SelectGamemodeView.vue')
+    },
+    {
       path: '/play',
       name: 'play',
       component: () => import('../views/GameUIView.vue')
