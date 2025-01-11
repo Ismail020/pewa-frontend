@@ -10,9 +10,9 @@ class WebSocketService {
         this.subscriptions = new Map();
     }
 
-    connect(onConnectCallback, onDisconnectCallback, onErrorCallback) {
-        const decodedToken = jwtDecode(this.token);
-        this.username = decodedToken.sub;
+    connect(endpoint, token) {
+        // const decodedToken = jwtDecode(this.token);
+        // this.username = decodedToken.sub;
 
 
         this.client = new Client({
@@ -20,25 +20,29 @@ class WebSocketService {
             connectHeaders: {
                 Authorization: `Bearer ${this.token}`
             },
+            debug: (str) => {
+                console.log("Stomp debug: ", str)
+            },
             onConnect: () => {
                 this.isConnected = true;
                 console.log("Websocket connected");
-                if (onConnectCallback) onConnectCallback(this.username);
+                //this.subscribe('/app/start');
+
+                //console.log(`Subscribing to: /user/${this.username}/queue/game`);
+
+                //this.subscribe('/user/queue/game')
             },
             onDisconnect : () => {
                 this.isConnected = false;
                 console.log("Websocket disconnected");
-                if (onDisconnectCallback) onDisconnectCallback();
 
             },
             onStompError: (error) => {
                 console.error("Stomp error: ", error);
-                if (onErrorCallback) onErrorCallback(error);
 
             },
             onWebSocketError: (error) => {
                 console.error("Websocket error: ", error);
-                if (onErrorCallback) onErrorCallback(error);
             }
         });
 
@@ -51,6 +55,7 @@ class WebSocketService {
         if (this.client) {
             this.client.deactivate()
             this.isConnected = false;
+            console.log("Disconnected")
         }
     }
 
@@ -90,7 +95,11 @@ class WebSocketService {
             console.error("Websocket is not connected")
         }
     }
-
+    handleGameMessage(message) {
+        // Handle the game message (you can modify this as per your needs)
+        console.log("Game message received:", message);
+    }
 }
+export default WebSocketService
 
-export default WebSocketService;
+

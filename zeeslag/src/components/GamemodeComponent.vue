@@ -49,10 +49,11 @@ export default {
       // Navigate to the play against bot page
       this.$router.push({ path: "/play" });
     },
-
     startMatchmaking() {
       const token = localStorage.getItem("token"); // Get token from localStorage
-      console.log("Starting matchmaking with token: " + token);
+      console.log("Starting matchmaking with token: " + token, typeof token);
+
+      this.webSocketService = new WebSocketService(this.gameEndPoint, token);
 
       try {
         const decodedToken = jwtDecode(token);
@@ -63,13 +64,7 @@ export default {
         console.error("Failed to decode token: ", error);
       }
 
-      this.webSocketService = new WebSocketService(this.gameEndPoint, token);
-
-      this.webSocketService.connect(
-          this.handleWebSocketConnect,
-          this.handleWebSocketDisconnect,
-          this.handleWebSocketError
-      );
+      this.webSocketService.connect();
     },
 
     handleWebSocketConnect(username) {
@@ -77,11 +72,10 @@ export default {
 
       // Send start message to the WebSocket server
       this.webSocketService.sendMessage("/app/start", {});
-      console.log(`Subscribing to: /user/${this.username}/queue/game`);
 
       // Subscribe to game messages for the user
       this.webSocketService.subscribe('/user/queue/game', this.handleGameMessage);
-    },
+   },
 
     handleWebSocketDisconnect() {
       console.log("Disconnected from WebSocket");
@@ -108,6 +102,7 @@ export default {
         console.error("Invalid game data received:", gameData);
       }
     }
+
   }
 };
 </script>

@@ -1,5 +1,7 @@
 <script>
 import CONFIG from "@/config.js";
+import {jwtDecode} from "jwt-decode";
+import WebSocketService from "@/stores/WebSocketService.js";
 
 export default {
   name: "LoginComponent",
@@ -32,11 +34,15 @@ export default {
 
         const data = await response.json();
         localStorage.setItem("token", data.token);
+
+        //this.startMatchmaking()
+
         this.$router.push({path: "/selectgamemode"})
       } catch (error) {
         this.errorMessage = "Invalid login credentials. Please try again.";
       }
     },
+
   },
 };
 </script>
