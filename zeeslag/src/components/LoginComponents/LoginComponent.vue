@@ -2,6 +2,7 @@
 import CONFIG from "@/config.js";
 import {jwtDecode} from "jwt-decode";
 import WebSocketService from "@/stores/WebSocketService.js";
+import {cloneVNode} from "vue";
 
 export default {
   name: "LoginComponent",
@@ -35,7 +36,11 @@ export default {
         const data = await response.json();
         localStorage.setItem("token", data.token);
 
-        //this.startMatchmaking()
+        const token = localStorage.getItem('token')
+        console.log("Token extracted: ", token)
+
+        this.$webSocketService.connect(token)
+        console.log("Attempting connection from login")
 
         this.$router.push({path: "/selectgamemode"})
       } catch (error) {

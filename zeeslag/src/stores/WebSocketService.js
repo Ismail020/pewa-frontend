@@ -2,18 +2,18 @@ import {Client} from '@stomp/stompjs'
 import { jwtDecode } from "jwt-decode";
 
 class WebSocketService {
-    constructor(endpoint, token) {
+    constructor(endpoint) {
         this.client = null;
         this.isConnected = false;
         this.endpoint = endpoint;
-        this.token = token;
+        this.token = null;
         this.subscriptions = new Map();
     }
 
-    connect(endpoint, token) {
+    connect(token) {
         // const decodedToken = jwtDecode(this.token);
         // this.username = decodedToken.sub;
-
+        this.token = token;
 
         this.client = new Client({
             brokerURL: this.endpoint,

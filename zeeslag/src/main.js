@@ -5,13 +5,13 @@ import App from './App.vue'
 import router from './router'
 import './assets/tailwind.css'
 
-//import WebSocketService from "@/stores/WebSocketService.js";
+import WebSocketService from "@/stores/WebSocketService.js";
 
-//const backendUrl = import.meta.env.VITE_BACKEND_URL
-//const webSocketService = new WebSocketService()
+const wsUrl = import.meta.env.VITE_WS_URL
+const webSocketService = new WebSocketService(wsUrl)
 
 const app = createApp(App)
-//app.config.globalProperties.$webSocketService = webSocketService
+app.config.globalProperties.$webSocketService = webSocketService
 
 app.use(createPinia())
 app.use(router)
