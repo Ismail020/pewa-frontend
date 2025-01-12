@@ -21,12 +21,10 @@
     </div>
 
     <!-- Conditionally render BattleshipGame component -->
-    <BattleshipGame v-if="gameStarted" :webSocketService="webSocketService" />
   </div>
 </template>
 
 <script>
-import BattleshipGame from "./GameUI/BattleShipGame.vue"; // Adjusted import path
 import { jwtDecode } from "jwt-decode";
 
 export default {
@@ -36,9 +34,6 @@ export default {
       username: null,
       gameStarted: false,  // Control the game start status
     };
-  },
-  components: {
-    BattleshipGame,  // Register the BattleshipGame component
   },
   methods: {
     playAgainstBot() {
@@ -68,10 +63,11 @@ export default {
       } catch(error) {
         console.error("Subscription to game message endpoint failed")
       }
+      this.$router.push({ path: "/play" });
 
     },
     handleGameMessage(message) {
-      console.log("Received message:", message);
+      console.log("Received game message:", message);
 
       let gameData;
       try {

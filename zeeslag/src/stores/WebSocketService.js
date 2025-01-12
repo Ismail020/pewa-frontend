@@ -95,9 +95,9 @@ class WebSocketService {
             console.error("Websocket is not connected")
         }
     }
-    handleGameMessage(message) {
+    handleMessage(message) {
         // Handle the game message (you can modify this as per your needs)
-        console.log("Game message received:", message);
+        console.log("Message received:", message);
     }
 }
 export default WebSocketService

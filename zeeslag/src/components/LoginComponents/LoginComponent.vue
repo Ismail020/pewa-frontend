@@ -1,8 +1,4 @@
 <script>
-import CONFIG from "@/config.js";
-import {jwtDecode} from "jwt-decode";
-import WebSocketService from "@/stores/WebSocketService.js";
-import {cloneVNode} from "vue";
 
 export default {
   name: "LoginComponent",
@@ -14,9 +10,10 @@ export default {
     };
   },
   methods: {
-    //send POST request with email and password
+
     async login() {
-      const url = "http://"+CONFIG.backendUrl+"/api/v1/auth/authenticate";
+
+      const url = import.meta.env.VITE_API_URL+"/api/v1/auth/authenticate";
       try {
         const response = await fetch(url, {
           method: "POST",
