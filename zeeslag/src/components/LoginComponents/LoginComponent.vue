@@ -1,5 +1,4 @@
 <script>
-import CONFIG from "@/config.js";
 
 export default {
   name: "LoginComponent",
@@ -11,9 +10,10 @@ export default {
     };
   },
   methods: {
-    //send POST request with email and password
+
     async login() {
-      const url = "http://"+CONFIG.backendUrl+"/api/v1/auth/authenticate";
+
+      const url = import.meta.env.VITE_API_URL+"/api/v1/auth/authenticate";
       try {
         const response = await fetch(url, {
           method: "POST",
@@ -32,11 +32,19 @@ export default {
 
         const data = await response.json();
         localStorage.setItem("token", data.token);
+
+        const token = localStorage.getItem('token')
+        console.log("Token extracted: ", token)
+
+        this.$webSocketService.connect(token)
+        console.log("Attempting connection from login")
+
         this.$router.push({path: "/selectgamemode"})
       } catch (error) {
         this.errorMessage = "Invalid login credentials. Please try again.";
       }
     },
+
   },
 };
 </script>

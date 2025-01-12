@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white">
     <h1 class="text-4xl font-bold mb-8">Register</h1>
 
-    <div class="space-y-4 w-96">
+    <div class="space-y-4 w-96" @keydown.enter="register">
       <!-- Avatar Selection -->
       <div class="input-group">
         <h2 class="text-lg font-semibold mb-2">Select an Avatar</h2>
@@ -100,7 +100,7 @@ export default {
     },
     // Register method
     register() {
-      const url = "http://"+CONFIG.backendUrl+"/api/v1/auth/register";  // Adjust URL if needed
+      const url = import.meta.env.VITE_API_URL+"/api/v1/auth/register";  // Adjust URL if needed
       fetch(url, {
         method: "POST",
         headers: {

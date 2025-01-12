@@ -21,38 +21,29 @@
     </div>
 
     <!-- Conditionally render BattleshipGame component -->
-    <BattleshipGame v-if="gameStarted" :webSocketService="webSocketService" />
   </div>
 </template>
 
 <script>
-import WebSocketService from "@/stores/WebSocketService.js";
-import BattleshipGame from "./GameUI/BattleShipGame.vue"; // Adjusted import path
 import { jwtDecode } from "jwt-decode";
-import CONFIG from "@/config.js";
 
 export default {
   name: "GamemodeComponent",
   data() {
     return {
-      webSocketService: null,
-      gameEndPoint: "ws://"+CONFIG.backendUrl+"/ws/game",
       username: null,
       gameStarted: false,  // Control the game start status
     };
-  },
-  components: {
-    BattleshipGame,  // Register the BattleshipGame component
   },
   methods: {
     playAgainstBot() {
       // Navigate to the play against bot page
       this.$router.push({ path: "/play" });
     },
-
     startMatchmaking() {
       const token = localStorage.getItem("token"); // Get token from localStorage
-      console.log("Starting matchmaking with token: " + token);
+      console.log("Starting matchmaking with token: " + token, typeof token);
+
 
       try {
         const decodedToken = jwtDecode(token);
@@ -62,37 +53,21 @@ export default {
       } catch (error) {
         console.error("Failed to decode token: ", error);
       }
-
-      this.webSocketService = new WebSocketService(this.gameEndPoint, token);
-
-      this.webSocketService.connect(
-          this.handleWebSocketConnect,
-          this.handleWebSocketDisconnect,
-          this.handleWebSocketError
-      );
-    },
-
-    handleWebSocketConnect(username) {
-      console.log("Connected as ", username);
-
       // Send start message to the WebSocket server
-      this.webSocketService.sendMessage("/app/start", {});
-      console.log(`Subscribing to: /user/${this.username}/queue/game`);
+      this.$webSocketService.sendMessage("/app/start", {});
+      console.log("Initiating queue")
 
-      // Subscribe to game messages for the user
-      this.webSocketService.subscribe('/user/queue/game', this.handleGameMessage);
+      try {
+        this.$webSocketService.subscribe('/user/queue/game', this.handleGameMessage);
+        console.log("Subscribing to game message endpoint")
+      } catch(error) {
+        console.error("Subscription to game message endpoint failed")
+      }
+      this.$router.push({ path: "/play" });
+
     },
-
-    handleWebSocketDisconnect() {
-      console.log("Disconnected from WebSocket");
-    },
-
-    handleWebSocketError(error) {
-      console.error("WebSocket error:", error);
-    },
-
     handleGameMessage(message) {
-      console.log("Received message:", message);
+      console.log("Received game message:", message);
 
       let gameData;
       try {
@@ -108,6 +83,7 @@ export default {
         console.error("Invalid game data received:", gameData);
       }
     }
+
   }
 };
 </script>
