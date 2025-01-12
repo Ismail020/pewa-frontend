@@ -34,7 +34,6 @@
 
       <LogComponent :title="'P2 Log'" :moves="p2Moves" class="max-w-xs"/>
     </main>
-    <ChatComponent :messages="chatMessages"/>
   </div>
 </template>
 
