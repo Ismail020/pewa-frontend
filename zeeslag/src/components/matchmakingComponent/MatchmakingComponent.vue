@@ -1,6 +1,6 @@
 <template>
   <div class="matchmaking-list">
-    <h1>There are {{ players }} players currently in queue...</h1>
+    <h1>There are {{ queueSize }} players currently in queue...</h1>
     <table class="table-auto border-collapse border border-gray-400 w-full text-left">
       <thead>
       <tr>
@@ -9,19 +9,19 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="player in players" :key="player.id">
-        <td class="border border-gray-300 px-5 py-2">{{ player.name }}</td>
+      <tr v-for="player in players" :key="player">
+        <td class="border border-gray-300 px-5 py-2">{{ player }}</td>
         <td class="border border-gray-300 px-5 py-2">
           <button
               class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-              @click="joinPlayer(player.id)"
+              @click="joinPlayer(player)"
           >
             Join
           </button>
           <button
               v-if="isChallenger(player)"
               class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-700"
-              @click="challengePlayer(player.id)"
+              @click="challengePlayer(player)"
           >
             Challenge
           </button>
@@ -34,18 +34,31 @@
 
 <script>
 import { jwtDecode } from "jwt-decode";
+import { usePlayerStore } from '@/stores/playerStore.js';
+
 
 export default {
-  name: "MatchmakingList",
-  props: {
-    players: Array,
+  computed: {
+    players() {
+      const playerStore = usePlayerStore(); // Access the store
+      return playerStore.players; // Access the state (player list)
+    },
+    queueSize() {
+      const playerStore = usePlayerStore(); // Access the store
+      return playerStore.queueSize; // Access the queue size
+    }
   },
+  name: "MatchmakingList",
   data() {
     return {
       username: null,
     };
   },
   methods: {
+    updatePlayers(newPlayers) {
+      const playerStore = usePlayerStore(); // Access the store
+      playerStore.setPlayers(newPlayers); // Update the state with a new list of players
+    },
     joinPlayer(playerId) {
       // Emit the joinPlayer event to the parent
       this.$emit("joinPlayer", playerId);

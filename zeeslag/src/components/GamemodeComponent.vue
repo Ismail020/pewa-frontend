@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import {usePlayerStore} from "@/stores/playerStore.js";
 import { jwtDecode } from "jwt-decode";
 
 export default {
@@ -71,10 +72,20 @@ export default {
       // },
       try {
         // Subscribe to the topic to receive messages from the server
-        this.$webSocketService.subscribe("/topic/info", (messageOutput) => {
-          // Handle any messages that arrive
-          const message = messageOutput.body;
-          console.log("Received broadcast message: ", message);
+        this.$webSocketService.subscribe("/topic/info", (message) => {
+          const playerStore = usePlayerStore();
+
+
+          // Ensure the player data is set before proceeding
+          if (JSON.parse(message.body).players && JSON.parse(message.body).queueSize !== undefined) {
+            console.log("boing!")
+            playerStore.setPlayers(JSON.parse(message.body).players);
+            playerStore.setQueueSize(JSON.parse(message.body).queueSize);
+
+            console.log("Received broadcast message: ", message);
+          } else {
+            console.warn("Received invalid message:", message);
+          }
         });
 
         // Send a message to join the queue with the user's information
