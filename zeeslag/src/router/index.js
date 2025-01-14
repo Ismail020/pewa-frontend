@@ -37,6 +37,11 @@ const router = createRouter({
       name: 'play',
       component: () => import('../views/GameUIView.vue')
     },
+    {
+      path: '/forgot',
+      name: 'forgot',
+      component: () => import('../components/LoginComponents/Forgot.vue')
+    },
   ]
 })
 

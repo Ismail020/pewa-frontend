@@ -13,7 +13,7 @@ export default {
 
     async login() {
 
-      const url = import.meta.env.VITE_API_URL+"/api/v1/auth/authenticate";
+      const url = import.meta.env.VITE_API_URL + "/api/v1/auth/authenticate";
       try {
         const response = await fetch(url, {
           method: "POST",
@@ -34,10 +34,8 @@ export default {
         localStorage.setItem("token", data.token);
 
         const token = localStorage.getItem('token')
-        console.log("Token extracted: ", token)
 
         this.$webSocketService.connect(token)
-        console.log("Attempting connection from login")
 
         this.$router.push({path: "/selectgamemode"})
       } catch (error) {
@@ -54,10 +52,10 @@ export default {
     <div class="register-form">
       <form @submit.prevent="login">
         <div id="upper-input" class="input">
-          <input v-model="email" id="email" type="email" placeholder="Email" required />
+          <input v-model="email" id="email" type="email" placeholder="Email" required/>
         </div>
         <div class="input">
-          <input v-model="password" id="password" type="password" placeholder="Password" required />
+          <input v-model="password" id="password" type="password" placeholder="Password" required/>
         </div>
         <div class="input">
           <button type="submit">LOGIN</button>
@@ -65,9 +63,13 @@ export default {
         </div>
       </form>
       <div class="input">
-        <span id="account">Don't have an account?</span>
-        <span id="register">
-          <router-link to="/register"> Register! </router-link></span>
+        <p><span id="account">Don't have an account?</span>
+          <span class="register">
+          <router-link to="/register"> Register! </router-link></span></p>
+        <p class="register">
+          <router-link to="/forgot"> Forgot Password</router-link>
+        </p>
+
       </div>
     </div>
   </div>
@@ -76,7 +78,7 @@ export default {
 <style scoped>
 .input {
   background-color: #383B45;
-  padding: 30px;
+  padding: 20px;
   text-align: center;
 }
 
@@ -88,7 +90,6 @@ export default {
 }
 
 .register-form {
-  margin-top: 30px;
   display: flex;
   flex-direction: column;
   background-color: #F6F6F6;
@@ -108,8 +109,8 @@ button {
 }
 
 button:hover {
-  color: #3645a6;
-  border: 2px solid #3645a6;
+  color: #909df3;
+  border: 2px solid #909df3;
 }
 
 #account {
@@ -118,8 +119,8 @@ button:hover {
   font-size: 20px;
 }
 
-#register {
-  color: #4e60d5;
+.register {
+  color: #909df3;
   font-weight: bold;
   font-size: 20px;
 }
