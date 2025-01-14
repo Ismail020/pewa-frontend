@@ -12,6 +12,7 @@ export default {
       timeLeft: this.time
     };
   },
+
   watch: {
     time() {
       this.timeLeft = this.time;
