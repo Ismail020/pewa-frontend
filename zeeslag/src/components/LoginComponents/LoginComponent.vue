@@ -67,7 +67,7 @@ export default {
           <span class="register">
           <router-link to="/register"> Register! </router-link></span></p>
         <p class="register">
-          <router-link to="/forgot"> Forgot Password</router-link>
+          <router-link to="/forgot"> Forgot Password? </router-link>
         </p>
 
       </div>
@@ -77,7 +77,7 @@ export default {
 
 <style scoped>
 .input {
-  background-color: #383B45;
+  background-color: #2d3748;
   padding: 20px;
   text-align: center;
 }
@@ -85,7 +85,7 @@ export default {
 .background-container {
   display: flex;
   justify-content: center;
-  background-color: #383B45;
+  background-color: #2d3748;
   width: 100vw;
 }
 
@@ -102,7 +102,7 @@ button {
   text-align: center;
   font-size: 30px;
   font-weight: bold;
-  border: 2px solid white;
+  border: 1px solid white;
   margin: 5px;
   border-radius: 5px;
   padding: 10px;
@@ -115,7 +115,7 @@ button:hover {
 
 #account {
   color: white;
-  background-color: #383B45;
+  background-color: #2d3748;
   font-size: 20px;
 }
 
