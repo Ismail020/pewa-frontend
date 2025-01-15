@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import {usePlayerStore} from "@/stores/playerStore.js";
 import { jwtDecode } from "jwt-decode";
 
 export default {
@@ -54,19 +55,50 @@ export default {
         console.error("Failed to decode token: ", error);
       }
       // Send start message to the WebSocket server
-      this.$webSocketService.sendMessage("/app/start", {});
+      // this.$webSocketService.sendMessage("/app/start", {});
       console.log("Initiating queue")
 
+      //   try {
+      //     // this.$webSocketService.subscribe('/user/queue/game', );
+      //     this.$webSocketService.subscribe("/topic/info");
+      //     const message = messageOutput.body;
+      //     this.$webSocketService.sendMessage("/queue/enter", message);
+      //   }
+      //   catch(error) {
+      //     console.error("Subscription to game message endpoint failed")
+      //   }
+      //   this.$router.push({ path: "/matchMaking" });
+      //
+      // },
       try {
-        this.$webSocketService.subscribe('/user/queue/game', this.handleGameMessage);
-        console.log("Subscribing to game message endpoint")
-      } catch(error) {
-        console.error("Subscription to game message endpoint failed")
-      }
-      this.$router.push({ path: "/play" });
+        // Subscribe to the topic to receive messages from the server
+        this.$webSocketService.subscribe("/topic/info", (message) => {
+          const playerStore = usePlayerStore();
 
+
+          // Ensure the player data is set before proceeding
+          if (JSON.parse(message.body).players && JSON.parse(message.body).queueSize !== undefined) {
+            console.log("boing!")
+            playerStore.setPlayers(JSON.parse(message.body).players);
+            playerStore.setQueueSize(JSON.parse(message.body).queueSize);
+
+            console.log("Received broadcast message: ", message);
+          } else {
+            console.warn("Received invalid message:", message);
+          }
+        });
+
+        // Send a message to join the queue with the user's information
+        const message = "Hi, I'm joining the queue!"; // Replace with actual message if needed
+        this.$webSocketService.sendMessage("/app/queue/enter", message);
+
+        // Navigate to matchmaking page
+        this.$router.push({path: "/matchMaking"});
+      } catch (error) {
+        console.error("Subscription or message sending failed", error);
+      }
     },
-    handleGameMessage(message) {
+        handleGameMessage(message) {
       console.log("Received game message:", message);
 
       let gameData;

@@ -33,9 +33,19 @@ const router = createRouter({
       component: () => import('../views/SelectGamemodeView.vue')
     },
     {
+      path: '/playCPU',
+      name: 'playCPU',
+      component: () => import('../views/GameUIView.vue')
+    },
+    {
       path: '/play',
       name: 'play',
       component: () => import('../views/GameUIView.vue')
+    },
+    {
+      path: '/matchMaking',
+      name: 'matchMaking',
+      component: () => import('../views/matchmakingView.vue')
     },
   ]
 })
