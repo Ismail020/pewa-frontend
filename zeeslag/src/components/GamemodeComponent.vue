@@ -91,6 +91,15 @@ export default {
         // Send a message to join the queue with the user's information
         const message = "Hi, I'm joining the queue!"; // Replace with actual message if needed
         this.$webSocketService.sendMessage("/app/queue/enter", message);
+        this.$webSocketService.subscribe("/user/queue/challenged", (message) => {
+
+
+         const accepted = confirm(JSON.parse(message.body).message)
+          if (accepted) {
+            this.$webSocketService.sendMessage("/app/start", "we got: " + JSON.parse(message.body).message)
+          }
+        });
+
 
         // Navigate to matchmaking page
         this.$router.push({path: "/matchMaking"});
