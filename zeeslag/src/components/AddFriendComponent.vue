@@ -16,13 +16,13 @@
 export default {
   data() {
     return {
-      username: '',
+      username: '', // Dynamisch ophalen van username kan hier worden toegevoegd
       friendUsername: ''
     };
   },
   methods: {
     addFriend() {
-      const url = import.meta.env.VITE_API_URL+'/api/friends/add'; // Adjust URL if needed
+      const url = import.meta.env.VITE_API_URL + '/api/friends/add';
       fetch(url, {
         method: "POST",
         headers: {
@@ -33,19 +33,19 @@ export default {
           friendUsername: this.friendUsername,
         }),
       })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(`Server response was ${response.status}`);
-            }
-            return response.json(); // On success, parse response
-          })
-          .then((data) => {
-            alert('Friend added successfully');
-          })
-          .catch((error) => {
-            console.error('Error adding friend:', error);
-            alert('Error adding friend. Please try again.');
-          });
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Server response was ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(() => {
+          alert('Friend added successfully');
+        })
+        .catch(error => {
+          console.error('Error adding friend:', error);
+          alert('Error adding friend. Please try again.');
+        });
     }
   }
 };
