@@ -3,13 +3,17 @@
 </template>
 
 <script>
+import WebSocketService from '@/stores/WebSocketService';
+
 export default {
   props: {
-    time: Number
+    time: Number,
+    matchId: String
   },
   data() {
     return {
-      timeLeft: this.time
+      timeLeft: this.time,
+      webSocketService: new WebSocketService('ws://your-websocket-endpoint')
     };
   },
   watch: {
@@ -24,10 +28,20 @@ export default {
       } else {
         this.$emit('time-up');
       }
+    },
+    handleTimerUpdate(message) {
+      const data = JSON.parse(message.body);
+      this.timeLeft = data;
     }
   },
   mounted() {
+    this.webSocketService.connect('your-jwt-token');
+    this.webSocketService.subscribeToMatch(this.matchId, this.handleTimerUpdate);
     setInterval(this.countdown, 1000);
+  },
+  beforeDestroy() {
+    this.webSocketService.unsubscribe(`/topic/match/${this.matchId}/timer`);
+    this.webSocketService.disconnect();
   }
 };
 </script>

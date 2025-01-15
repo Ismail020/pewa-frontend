@@ -9,7 +9,7 @@
       <button class="focus:outline-none">
         <img class="w-8 h-8 object-contain" src="@/assets/images/sound icon.jpg" alt="Sound Icon" />
       </button>
-      
+
       <button class="focus:outline-none">
         <img class="w-8 h-8 object-contain" src="@/assets/images/settings icon.jpg" alt="Settings Icon" />
       </button>

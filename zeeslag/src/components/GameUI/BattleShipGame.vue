@@ -14,7 +14,6 @@
 
       <LogComponent :title="'P2 Log'" :moves="p2Moves" class="max-w-xs" />
     </main>
-    <div v-if="tooltipMessage" class="tooltip">{{ tooltipMessage }}</div>
     <ChatComponent :messages="chatMessages" />
   </div>
 </template>
