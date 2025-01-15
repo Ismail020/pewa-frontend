@@ -49,44 +49,41 @@ export default {
 
 <template>
   <div class="background-container">
-    <div class="register-form">
+    <div class="form-container">
       <form @submit.prevent="login">
-        <div id="upper-input" class="input">
-          <input v-model="email" id="email" type="email" placeholder="Email" required/>
+        <div class="input">
+          <input v-model="email" type="email" placeholder="Email" required/>
         </div>
         <div class="input">
-          <input v-model="password" id="password" type="password" placeholder="Password" required/>
+          <input v-model="password" type="password" placeholder="Password" required/>
         </div>
-        <div class="input">
-          <button type="submit">LOGIN</button>
-          <div v-if="errorMessage" class="p-4 mb-4 text-sm text-red-800">{{ errorMessage }}</div>
-        </div>
+        <button type="submit">LOGIN</button>
+        <div v-if="errorMessage" class="p-4 mb-4 text-sm text-red-800">{{ errorMessage }}</div>
       </form>
-      <div class="input">
-        <p><span id="account">Don't have an account?</span>
-          <span class="register">
-          <router-link to="/register"> Register! </router-link></span></p>
-        <p class="register">
-          <router-link to="/forgot"> Forgot Password? </router-link>
+      <div class="links">
+        <p>Don't have an account?
+          <router-link to="/register"> Register! </router-link></p>
+        <p>
+          <router-link to="/forgot"> Forgot Password?</router-link>
         </p>
-
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.background-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #2d3748;
+  width: 100vw;
+}
+
 .input {
   background-color: #2d3748;
   padding: 20px;
   text-align: center;
-}
-
-.background-container {
-  display: flex;
-  justify-content: center;
-  background-color: #2d3748;
-  width: 100vw;
 }
 
 .register-form {
@@ -99,13 +96,13 @@ export default {
 button {
   background-color: darkred;
   color: white;
-  text-align: center;
-  font-size: 30px;
+  font-size: 16px;
   font-weight: bold;
-  border: 1px solid white;
-  margin: 5px;
-  border-radius: 5px;
-  padding: 10px;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 button:hover {
