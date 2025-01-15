@@ -6,12 +6,13 @@ export default {
       password: "",
       confirmPassword: "",
       message: "",
+      success: false
     }
   },
   methods: {
     async submitNewPassword() {
       if (this.password !== this.confirmPassword) {
-        this.message = "Passwords are not the same"
+        this.message = "Passwords do not match"
         return
       }
       const url = import.meta.env.VITE_API_URL + "/api/v1/auth/reset-password"
@@ -24,7 +25,6 @@ export default {
           },
           body: JSON.stringify({
             password: this.password,
-            confirmPassword: this.confirmPassword,
             token: token,
           })
         })
@@ -32,17 +32,19 @@ export default {
 
         const json = await response.json();
 
-        if (!response.ok) {
-          console.log(json)
+        if (response.ok) {
           this.message = json.message;
-          throw new Error(`Password reset failed, response status: ${response.status}`)
+          this.success = true;
+        } else {
+          this.message = json.message || `Error: ${response.status}`
+          throw new Error(`Password reset failed, status: ${response.status}`);
         }
-        this.message = json.message
-        console.log("Server responded: ", this.message)
-        //this.$router.push("/login")
       } catch (error) {
-        console.log("error :", error)
+        console.error("An error occurred: ", error);
       }
+    },
+    toLogin() {
+      this.$router.push("/login")
     }
   }
 }
@@ -50,22 +52,40 @@ export default {
 
 <template>
   <div class="form">
-    <form @submit.prevent="submitNewPassword">
-      <div><h3> Enter new password </h3></div>
-      <div class="input">
-        <label> Enter your new password here </label>
-        <input type="password" id="password" placeholder="Enter new password" v-model="password"/>
-        <label> Confirm password </label>
-        <input type="password" id="password" placeholder="Confirm password" v-model="confirmPassword"/>
+    <form @submit.prevent="submitNewPassword" @keydown.enter="submitNewPassword">
+      <div v-if="!success">
+        <div class="input">
+          <div v-if="message" class="message"> {{ message }}</div>
+          <label> Enter your new password here </label>
+          <input type="password" id="password" placeholder="Enter new password" v-model="password"/>
+          <label> Confirm password </label>
+          <input type="password" id="password" placeholder="Confirm password" v-model="confirmPassword"/>
+          <button type="submit"> Submit</button>
+
+        </div>
+      </div>
+      <div v-else @keydown.enter="toLogin">
+        <div class="message success"> {{ message }}</div>
+        <button @click="toLogin"> Proceed to login</button>
 
       </div>
-      <button> Submit</button>
-      <div v-if="message"> {{ message }}</div>
+
+
     </form>
   </div>
 </template>
 
 <style scoped>
+
+.message {
+  color: red;
+  margin-bottom: 10px
+}
+
+.success {
+  color: green;
+}
+
 .input {
   background-color: #2d3748;
   padding: 20px;
@@ -89,7 +109,7 @@ button {
   text-align: center;
   font-size: 30px;
   font-weight: bold;
-  border: 2px solid white;
+  border: 1px solid white;
   margin: 5px;
   border-radius: 5px;
   padding: 10px;

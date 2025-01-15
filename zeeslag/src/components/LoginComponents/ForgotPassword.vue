@@ -41,18 +41,21 @@ export default {
 <template>
   <div class="form">
   <form @submit.prevent="requestPasswordResetLink">
+    <div v-if="message"> {{ message }}</div>
     <div> <h3> Request password reset link </h3> </div>
     <div class="input">
-      <label> Email </label>
       <input type="email" id="email" placeholder="Email" v-model="email"/>
     </div>
     <button> Send request </button>
-    <div v-if="message"> {{ message }}</div>
   </form>
   </div>
 </template>
 
 <style scoped>
+h3 {
+  color: white;
+}
+
 .input {
   background-color: #2d3748;
   padding: 20px;
@@ -74,7 +77,7 @@ button {
   text-align: center;
   font-size: 30px;
   font-weight: bold;
-  border: 2px solid white;
+  border: 1px solid white;
   margin: 5px;
   border-radius: 5px;
   padding: 10px;
