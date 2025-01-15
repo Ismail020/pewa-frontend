@@ -96,27 +96,99 @@ export default {
 </script>
 
 <style scoped>
+/* General styling */
+.matchmaking-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #2d3748; /* Dark gray background */
+  color: white;
+}
+
 h1 {
-  font-size: 24px;
-  font-style: italic;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
-.table-auto {
+
+/* Table styling */
+table {
   width: 100%;
+  max-width: 800px;
   border-collapse: collapse;
+  margin-top: 1rem;
+  background-color: #1a202c; /* Darker gray for table background */
+  border: 1px solid #4a5568; /* Medium gray border */
 }
-.border {
-  border: 1px solid gray;
+
+th, td {
+  border: 1px solid #4a5568; /* Medium gray border */
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 1rem;
 }
+
+th {
+  background-color: #4a5568; /* Medium gray for table headers */
+  color: white;
+  font-weight: bold;
+}
+
+td {
+  background-color: #2d3748; /* Slightly lighter gray for table rows */
+  color: white;
+}
+
+/* Button styling */
+button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* Join button */
 .bg-blue-500 {
-  background-color: #4299e1;
+  background-color: #4299e1; /* Blue */
+  color: white;
 }
+
+.bg-blue-500:hover {
+  background-color: #2b6cb0; /* Darker blue */
+}
+
+/* Challenge button */
 .bg-yellow-500 {
-  background-color: #ecc94b;
+  background-color: #ecc94b; /* Yellow */
+  color: #1a202c; /* Dark text for contrast */
 }
-.hover\:bg-blue-700:hover {
-  background-color: #2b6cb0;
+
+.bg-yellow-500:hover {
+  background-color: #b7791f; /* Darker yellow */
 }
-.hover\:bg-yellow-700:hover {
-  background-color: #b7791f;
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  table {
+    font-size: 0.875rem;
+  }
+
+  button {
+    font-size: 0.875rem;
+  }
 }
 </style>

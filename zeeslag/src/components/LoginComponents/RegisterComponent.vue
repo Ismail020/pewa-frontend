@@ -134,6 +134,8 @@ export default {
 </script>
 
 <style scoped>
+
+
 /* Container styling */
 .flex {
   display: flex;
