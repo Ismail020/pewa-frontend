@@ -30,7 +30,7 @@ export default {
 
         this.message = json.message
 
-      } catch(error) {
+      } catch (error) {
         console.log("error :", error)
       }
     }
@@ -39,58 +39,80 @@ export default {
 </script>
 
 <template>
-  <div class="form">
-  <form @submit.prevent="requestPasswordResetLink">
-    <div v-if="message"> {{ message }}</div>
-    <div> <h3> Request password reset link </h3> </div>
-    <div class="input">
-      <input type="email" id="email" placeholder="Email" v-model="email"/>
+  <div class="background-container">
+    <div class="form-container">
+      <form @submit.prevent="requestPasswordResetLink">
+        <h3> Request password reset link </h3>
+        <div v-if="message" class="message"> {{ message }}</div>
+        <div class="input">
+          <input type="email" placeholder="Email" v-model="email"/>
+        </div>
+        <button type="submit"> Send request</button>
+      </form>
     </div>
-    <button> Send request </button>
-  </form>
   </div>
 </template>
 
 <style scoped>
+.background-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #2d3748;
+  font-size: 20px;
+}
+
+
+.form-container {
+  background-color: #2d3748;
+  border-radius: 2px;
+  padding: 20px;
+  text-align: center;
+  width: 33vw;
+  display: flex;
+  flex-direction: column;
+}
+
 h3 {
   color: white;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: darkred;
+  transition: background-color 0.3s, transform 0.2s;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+}
+
+button:hover {
+  color: #909df3;
+  border: 1px solid #909df3;
 }
 
 .input {
-  background-color: #2d3748;
-  padding: 20px;
+  margin-bottom: 15px;
+}
+
+input {
+  width: 80%;
+  padding: 5px;
+  font-size: 18px;
+  border-radius: 4px;
   text-align: center;
+  margin-bottom: 5px;
+  color: black;
 
 }
-.form {
-  background-color: #2d3748;
-  display: flex;
-  flex-direction: column;
-  border-radius: 2px;
-  justify-content: center;
-  width: 100vw;
-  align-items: center;
+
+.message {
+  color: #ff6b6b;
+  margin-top: 10px;
 }
-button {
-  background-color: darkred;
-  color: white;
-  text-align: center;
-  font-size: 30px;
-  font-weight: bold;
-  border: 1px solid white;
-  margin: 5px;
-  border-radius: 5px;
-  padding: 10px;
-}
-button:hover {
-  color: #909df3;
-  border: 2px solid #909df3;
-}
-#email {
-  padding: 10px;
-  font-size: 20px;
-  width: 100%;
-  text-align: center;
-}
+
 
 </style>

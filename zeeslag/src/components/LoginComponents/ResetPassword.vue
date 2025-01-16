@@ -51,32 +51,76 @@ export default {
 </script>
 
 <template>
-  <div class="form">
-    <form @submit.prevent="submitNewPassword" @keydown.enter="submitNewPassword">
-      <div v-if="!success">
-        <div class="input">
+  <div class="background-container">
+    <div class="form-container">
+      <form @submit.prevent="submitNewPassword" @keydown.enter="submitNewPassword">
+        <div v-if="!success">
+          <h3>Reset Password</h3>
           <div v-if="message" class="message"> {{ message }}</div>
-          <label> Enter your new password here </label>
-          <input type="password" id="password" placeholder="Enter new password" v-model="password"/>
-          <label> Confirm password </label>
-          <input type="password" id="password" placeholder="Confirm password" v-model="confirmPassword"/>
+          <div class="input">
+            <input type="password" placeholder="Enter new password" v-model="password"/>
+            <input type="password" placeholder="Confirm password" v-model="confirmPassword"/>
+          </div>
           <button type="submit"> Submit</button>
-
         </div>
-      </div>
-      <div v-else @keydown.enter="toLogin">
-        <div class="message success"> {{ message }}</div>
-        <button @click="toLogin"> Proceed to login</button>
-
-      </div>
-
-
-    </form>
+        <div v-else @keydown.enter="toLogin">
+          <div class="message success"> {{ message }}</div>
+          <button @click="toLogin"> Proceed to log in</button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.background-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #2d3748;
+  font-size: 20px;
+  color: white;
+}
 
+.form-container {
+  background-color: #2d3748;
+  border-radius: 2px;
+  padding: 20px;
+  text-align: center;
+  width: 33vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  margin-bottom: 15px;
+}
+
+input {
+  width: 80%;
+  padding: 5px;
+  font-size: 18px;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 5px;
+  color: black;
+}
+
+button {
+  background-color: darkred;
+  transition: background-color 0.3s, transform 0.2s;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+}
+
+button:hover {
+  color: #909df3;
+  border: 1px solid #909df3;
+}
 .message {
   color: red;
   margin-bottom: 10px
@@ -84,47 +128,6 @@ export default {
 
 .success {
   color: green;
-}
-
-.input {
-  background-color: #2d3748;
-  padding: 20px;
-  text-align: center;
-
-}
-
-.form {
-  background-color: #2d3748;
-  display: flex;
-  flex-direction: column;
-  border-radius: 2px;
-  justify-content: center;
-  width: 100vw;
-  align-items: center;
-}
-
-button {
-  background-color: darkred;
-  color: white;
-  text-align: center;
-  font-size: 30px;
-  font-weight: bold;
-  border: 1px solid white;
-  margin: 5px;
-  border-radius: 5px;
-  padding: 10px;
-}
-
-button:hover {
-  color: #909df3;
-  border: 2px solid #909df3;
-}
-
-#password {
-  padding: 10px;
-  font-size: 20px;
-  width: 100%;
-  text-align: center;
 }
 
 </style>

@@ -57,14 +57,14 @@ export default {
         <div class="input">
           <input v-model="password" type="password" placeholder="Password" required/>
         </div>
-        <button type="submit">LOGIN</button>
-        <div v-if="errorMessage" class="p-4 mb-4 text-sm text-red-800">{{ errorMessage }}</div>
+        <button type="submit">Log in </button>
+        <div v-if="errorMessage" class="message">{{ errorMessage }}</div>
       </form>
       <div class="links">
         <p>Don't have an account?
-          <router-link to="/register"> Register! </router-link></p>
+          <router-link to="/register" class="link"> Register! </router-link></p>
         <p>
-          <router-link to="/forgot"> Forgot Password?</router-link>
+          <router-link to="/forgot" class="link"> Forgot Password?</router-link>
         </p>
       </div>
     </div>
@@ -77,64 +77,72 @@ export default {
   justify-content: center;
   align-items: center;
   background-color: #2d3748;
-  width: 100vw;
+  font-size: 20px;
+  color: white;
+}
+
+.form-container {
+  background-color: #2d3748;
+  border-radius: 2px;
+  padding: 20px;
+  text-align: center;
+  width: 33vw;
+  display: flex;
+  flex-direction: column;
 }
 
 .input {
-  background-color: #2d3748;
-  padding: 20px;
-  text-align: center;
+  margin-bottom: 15px;
 }
 
-.register-form {
-  display: flex;
-  flex-direction: column;
-  background-color: #F6F6F6;
-  border-radius: 2px;
+input {
+  width: 80%;
+  padding: 5px;
+  font-size: 18px;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 5px;
+  color: black;
 }
 
 button {
   background-color: darkred;
+  transition: background-color 0.3s, transform 0.2s;
+  cursor: pointer;
   color: white;
-  font-size: 16px;
   font-weight: bold;
   border: none;
   padding: 10px 20px;
   border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
 }
 
 button:hover {
   color: #909df3;
-  border: 2px solid #909df3;
+  border: 1px solid #909df3;
 }
 
-#account {
-  color: white;
-  background-color: #2d3748;
-  font-size: 20px;
-}
-
-.register {
+.link {
   color: #909df3;
-  font-weight: bold;
+  background-color: #2d3748;
+}
+
+.links {
   font-size: 20px;
+  margin-top: 10px;
+
 }
 
-#upper-input {
-  padding-top: 60px;
+.link:hover {
+  text-decoration: underline;
 }
 
-#password,
-#email {
-  padding: 10px;
-  font-size: 20px;
-  width: 100%;
-  text-align: center;
+.message {
+  color: #ff6b6b;
+  margin-top: 10px;
 }
 
-#hidden {
-  display: none;
+.success {
+  color: green;
 }
+
 </style>
