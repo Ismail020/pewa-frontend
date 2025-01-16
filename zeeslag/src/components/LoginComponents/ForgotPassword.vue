@@ -114,7 +114,7 @@ input {
   margin-top: 10px;
 }
 .no-color {
-  color: black;
+  color: white;
 }
 
 </style>
