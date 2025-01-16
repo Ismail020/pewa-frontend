@@ -141,8 +141,6 @@ button:hover {
   margin-top: 10px;
 }
 
-.success {
-  color: green;
-}
+
 
 </style>
