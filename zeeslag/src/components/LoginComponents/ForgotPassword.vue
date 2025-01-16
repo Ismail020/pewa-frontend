@@ -43,7 +43,7 @@ export default {
     <div class="form-container">
       <form @submit.prevent="requestPasswordResetLink">
         <h3> Request password reset link </h3>
-        <div v-if="message" class="message success"> {{ message }}</div>
+        <div v-if="message" class="message no-color"> {{ message }}</div>
         <div class="input">
           <input type="email" placeholder="Email" v-model="email"/>
         </div>
@@ -113,8 +113,8 @@ input {
   color: #ff6b6b;
   margin-top: 10px;
 }
-.success {
-  color: green;
+.no-color {
+  color: black;
 }
 
 </style>
