@@ -27,6 +27,7 @@
 <script>
 import {usePlayerStore} from "@/stores/playerStore.js";
 import { jwtDecode } from "jwt-decode";
+import router from "@/router/index.js";
 
 export default {
   name: "GamemodeComponent",
@@ -94,10 +95,25 @@ export default {
         this.$webSocketService.subscribe("/user/queue/challenged", (message) => {
 
 
-         const accepted = confirm(JSON.parse(message.body).message)
+         const accepted = confirm(JSON.parse(message.body).message + " challenged you!")
           if (accepted) {
-            this.$webSocketService.sendMessage("/app/start", "we got: " + JSON.parse(message.body).message)
+            // Ensure subscription before responding
+            this.$webSocketService.subscribe("/user/queue/gameId", (response) => {
+              const gameId = JSON.parse(response.body).gameId; // Extract gameId
+              router.push(`/Game/${gameId}`); // Navigate to the game
+            });
+
+            // Send the start message after subscription
+            this.$webSocketService.sendMessage("/app/start", JSON.parse(message.body).message);
+
+            // Unsubscribe from the challenge topic
+            this.$webSocketService.unsubscribe("/user/queue/challenged");
           }
+
+        });
+        this.$webSocketService.subscribe("/user/queue/gameId", (response) => {
+          const gameId = JSON.parse(response.body).gameId;
+          router.push(`/Game/${gameId}`); // Navigate to the game
         });
 
 
