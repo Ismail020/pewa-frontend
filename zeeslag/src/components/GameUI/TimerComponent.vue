@@ -13,7 +13,7 @@ export default {
   data() {
     return {
       timeLeft: this.time,
-      webSocketService: new WebSocketService('ws://your-websocket-endpoint')
+      webSocketService: new WebSocketService('ws://websocket-endpoint')
     };
   },
   watch: {
@@ -35,7 +35,7 @@ export default {
     }
   },
   mounted() {
-    this.webSocketService.connect('your-jwt-token');
+    this.webSocketService.connect('jwt-token');
     this.webSocketService.subscribeToMatch(this.matchId, this.handleTimerUpdate);
     setInterval(this.countdown, 1000);
   },
