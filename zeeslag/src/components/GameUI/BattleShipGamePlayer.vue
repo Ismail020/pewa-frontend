@@ -1,20 +1,40 @@
 <template>
   <div class="min-h-screen bg-blue-900 text-white p-4">
-    <HeaderComponent :player1="player1" :player2="player2" :round="round" :turn="turn" :score1="score1" :score2="score2"
-      :phase="p1Phase" />
+    <HeaderComponent
+        :player1="player1"
+        :player2="player2"
+        :round="round"
+        :turn="turn"
+        :score1="score1"
+        :score2="score2"
+        :phase="p1Phase"
+    />
 
     <main class="grid grid-cols-4 gap-4 mt-6">
-      <LogComponent :title="'P1 Log'" :moves="p1Moves" class="max-w-xs" />
+      <LogComponent :title="'P1 Log'" :moves="p1Moves" class="max-w-xs"/>
 
-      <BoardComponent :ships="p1Ships" :hits="p1Hits" :phase="p1Phase" :playerType="'human'"
-        @allShipsPlaced="handleAllShipsPlaced('p1')" @cellClicked="takeShot('p2', $event)" />
+      <BoardComponent
+          :ships="p1Ships"
+          :hits="p1Hits"
+          :phase="p1Phase"
+          :playerType="'human'"
+          @allShipsPlaced="handleAllShipsPlaced('p1')"
+          @cellClicked="takeShot('p2', $event)"
+      />
 
-      <BoardComponent ref="p2Board" :ships="p2Ships" :hits="p2Hits" :phase="p2Phase" :playerType="'CPU'"
-        @allShipsPlaced="handleAllShipsPlaced('p2')" @cellClicked="takeShot('p1', $event)" />
+      <BoardComponent
+          ref="p2Board"
+          :ships="p2Ships"
+          :hits="p2Hits"
+          :phase="p2Phase"
+          :playerType="'CPU'"
+          @allShipsPlaced="handleAllShipsPlaced('p2')"
+          @cellClicked="takeShot('p1', $event)"
+      />
 
-      <LogComponent :title="'P2 Log'" :moves="p2Moves" class="max-w-xs" />
+      <LogComponent :title="'P2 Log'" :moves="p2Moves" class="max-w-xs"/>
     </main>
-    <ChatComponent :messages="chatMessages" />
+    <ChatComponent :messages="chatMessages"/>
   </div>
 </template>
 
@@ -36,7 +56,7 @@ export default {
   },
   data() {
     return {
-      wsService: null,
+      wsService:  null,
       player1: "xX_sampleUsername123_Xx",
       player2: "xX_sampleUsername345_Xx",
       round: 1, //starts at round 1, goes up per turn done by player 2. could still be changed for if the first player to start is random.
@@ -46,20 +66,20 @@ export default {
       p1Moves: [], // list of all shots taken by player
       p2Moves: [], // list of all shots taken by player
       p1Ships: [
-        //list of all ships to be used by the players.
-        { name: "Carrier", size: 5, locations: [], placed: false },
-        { name: "Battleship", size: 4, locations: [], placed: false },
-        { name: "Cruiser", size: 3, locations: [], placed: false },
-        { name: "Submarine", size: 3, locations: [], placed: false },
-        { name: "Destroyer", size: 2, locations: [], placed: false }
+          //list of all ships to be used by the players.
+        {name: "Carrier", size: 5, locations: [], placed: false},
+        {name: "Battleship", size: 4, locations: [], placed: false},
+        {name: "Cruiser", size: 3, locations: [], placed: false},
+        {name: "Submarine", size: 3, locations: [], placed: false},
+        {name: "Destroyer", size: 2, locations: [], placed: false}
       ],
       p1Hits: [], //list of all hits taken by the player.
       p2Ships: [
-        { name: "Carrier", size: 5, locations: [], placed: false },
-        { name: "Battleship", size: 4, locations: [], placed: false },
-        { name: "Cruiser", size: 3, locations: [], placed: false },
-        { name: "Submarine", size: 3, locations: [], placed: false },
-        { name: "Destroyer", size: 2, locations: [], placed: false }
+        {name: "Carrier", size: 5, locations: [], placed: false},
+        {name: "Battleship", size: 4, locations: [], placed: false},
+        {name: "Cruiser", size: 3, locations: [], placed: false},
+        {name: "Submarine", size: 3, locations: [], placed: false},
+        {name: "Destroyer", size: 2, locations: [], placed: false}
       ],
       p2Hits: [],
       chatMessages: [
@@ -68,15 +88,14 @@ export default {
           text: "worst player EUW servers? Uninstall the game please?",
           class: "text-red-400"
         },
-        { user: "xX_sampleUsername456_Xx", text: "Mad cuz bad, gg losing dog tier player.", class: "text-blue-400" }
+        {user: "xX_sampleUsername456_Xx", text: "Mad cuz bad, gg losing dog tier player.", class: "text-blue-400"}
       ],
       p1Phase: 'setup',
       p2Phase: 'setup',
       player2Type: 'CPU',
-      tooltipMessage: null,
     };
   },
-  mounted() {
+  mounted () {
   },
   methods: {
     //method which is activated in the event that all ships have been placed from the player's side.
@@ -146,52 +165,56 @@ export default {
         cellId = Math.floor(Math.random() * 100);
       }
       // attempt the shot
-      console.log("CPU choosing cell: " + cellId);
+      console.log("CPU choosing cell: "+ cellId);
       this.takeShot('p2', cellId);
     },
 
     //shoots at the target @player 's board on the @cellId location
     takeShot(player, cellId) {
-      // Validatie: Controleer of de cel al geraakt is
-      const hits = player === 'p1' ? this.p2Hits : this.p1Hits;
-      if (hits.some(hit => hit.cellId === cellId)) {
-        this.showTooltip("You already shot here!");
-        return;
-      }
-
-      // Voer het schot uit
       if (player === 'p1') {
-        this.p1Moves.push(cellId);
+        this.p1Moves.push(cellId); // record player 1's move
         const hitShip = this.p2Ships.find(ship => ship.locations.includes(cellId));
         if (hitShip) {
-          this.p2Hits.push({ cellId, hit: true });
-          this.score1++;
+          this.p2Hits.push({cellId, hit: true}); // record player 2's ship being hit
+          this.score1++; // player score goes up
+          console.log("P1 hit! Cell:" + cellId);
         } else {
-          this.p2Hits.push({ cellId, hit: false });
+          this.p2Hits.push({cellId, hit: false});
+          console.log("P1 miss. Cell: " + cellId);
         }
       } else {
-        this.p2Moves.push(cellId);
+        this.p2Moves.push(cellId); // record player 2's move
         const hitShip = this.p1Ships.find(ship => ship.locations.includes(cellId));
         if (hitShip) {
-          this.p1Hits.push({ cellId, hit: true });
+          this.p1Hits.push({cellId, hit: true});
           this.score2++;
+          console.log("P2 hit! Cell: " + cellId);
         } else {
-          this.p1Hits.push({ cellId, hit: false });
+          this.p1Hits.push({cellId, hit: false});
+          console.log("P2 miss. Cell: " + cellId);
         }
       }
 
-      // Wissel van beurt
-      this.switchTurn();
+      //checks after every shot if all ships are sunk, could be changed by checking if the number of hit ship pieces is equal to the amount of cells the ships total.
+      if (this.checkAllShipsSunk('p1')) {
+        console.log("Player 1's ships have been sunk. Player 2 wins!");
+        this.endGame('p2'); // Player 2 wins
+      } else if (this.checkAllShipsSunk('p2')) {
+        console.log("Player 2's ships have been sunk. Player 1 wins!");
+        this.endGame('p1'); // Player 1 wins
+      } else {
+        // switch turns after logging the hit/miss
+        this.switchTurn(); // Always switch turns after a hit/miss
+      }
     },
-
     checkAllShipsSunk(player) {
       const ships = player === 'p1' ? this.p1Ships : this.p2Ships;
       const hits = player === 'p1' ? this.p1Hits : this.p2Hits;
 
       return ships.every(ship =>
-        ship.locations.every(location =>
-          hits.some(hit => hit.cellId === location && hit.hit)
-        )
+          ship.locations.every(location =>
+              hits.some(hit => hit.cellId === location && hit.hit)
+          )
       );
     },
     //ends the game and announces a winner, resets the game after clicking ok on the alert.
@@ -218,48 +241,10 @@ export default {
       this.score1 = 0;
       this.score2 = 0;
       this.turn = "P1";
-    },
-
-    showTooltip(message) {
-      this.tooltipMessage = message;
-      setTimeout(() => {
-        this.tooltipMessage = null;
-      }, 3000); // Verberg de tooltip na 3 seconden
-    },
+    }
   }
 };
 </script>
 
 <style scoped>
-.tooltip {
-  position: fixed;
-  bottom: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  animation: fade-in-out 3s;
-  z-index: 1000;
-}
-
-@keyframes fade-in-out {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 20px);
-  }
-
-  20%,
-  80% {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -20px);
-  }
-}
 </style>

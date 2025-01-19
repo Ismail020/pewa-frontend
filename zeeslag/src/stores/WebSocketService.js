@@ -57,8 +57,8 @@ class WebSocketService {
     subscribe(destination, callback) {
         if (this.client && this.isConnected) {
             const subscription = this.client.subscribe(destination, (message) => {
-                if (message && message.body) {
-                    callback(message.body)
+                if (message) {
+                        callback(message)
                     console.log('Received message: ', message.body);
                 } else {
                     console.error("Empty message received")

@@ -8,7 +8,6 @@
 </template>
 
 <script>
-//TODO: add move hit or miss status to the log, can be done via taking enemey hits list and comparing current move's id to enemy's hit list for occurences of this move's target  cell.
 export default {
   name: "LogComponent",
   props: {
