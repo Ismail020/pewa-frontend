@@ -102,23 +102,8 @@ export default {
     //needs to be fleshed out more still in case player is a real player.
     handleAllShipsPlaced(player) {
 
-      if (player === 'p1') {
         this.p1Phase = 'gameplay'; // change phase to gameplay for P1
-        // if P2 is CPU, randomize their ship placement
-
-        if (this.player2Type === 'CPU') {
-          // searches the game's references for the p2 board property (see 2nd board html element)
-          // if player2 is a cpu, they don't get to decide their own board. thus it must be placed randomly.
-          this.$refs.p2Board.randomizeShipPlacement();
-
-        }
-        this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships);
-
-      } else if (player === 'p2') {
-        //needs to be fleshed out still, for now
-        this.p2Phase = 'gameplay';
-        this.$webSocketService.sendMessage("/app/ships-placed", this.p2Ships)
-      }
+        this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships, );
 
       // check if both players are ready to start (boards are set up).
       if (this.p1Phase === 'gameplay' && this.p2Phase === 'gameplay') {

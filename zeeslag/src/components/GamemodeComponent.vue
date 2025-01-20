@@ -59,18 +59,7 @@ export default {
       // this.$webSocketService.sendMessage("/app/start", {});
       console.log("Initiating queue")
 
-      //   try {
-      //     // this.$webSocketService.subscribe('/user/queue/game', );
-      //     this.$webSocketService.subscribe("/topic/info");
-      //     const message = messageOutput.body;
-      //     this.$webSocketService.sendMessage("/queue/enter", message);
-      //   }
-      //   catch(error) {
-      //     console.error("Subscription to game message endpoint failed")
-      //   }
-      //   this.$router.push({ path: "/matchMaking" });
-      //
-      // },
+
       try {
         // Subscribe to the topic to receive messages from the server
         this.$webSocketService.subscribe("/topic/info", (message) => {

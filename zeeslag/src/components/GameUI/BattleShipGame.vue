@@ -112,12 +112,15 @@ export default {
           this.$refs.p2Board.randomizeShipPlacement();
 
         }
-        this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships);
+        // this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships);
+        console.log("player:"  + player);
+
 
       } else if (player === 'p2') {
         //needs to be fleshed out still, for now
         this.p2Phase = 'gameplay';
-        this.$webSocketService.sendMessage("/app/ships-placed", this.p2Ships)
+        // this.$webSocketService.sendMessage("/app/ships-placed", this.p2Ships)
+        console.log("player:"  + player);
       }
 
       // check if both players are ready to start (boards are set up).
