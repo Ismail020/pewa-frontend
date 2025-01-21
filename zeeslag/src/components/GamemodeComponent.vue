@@ -87,11 +87,12 @@ export default {
          const accepted = confirm(JSON.parse(message.body).message + " challenged you!")
           if (accepted) {
             // Ensure subscription before responding
-            this.$webSocketService.subscribe("/user/queue/gameId", (response) => {
-              const gameId = JSON.parse(response.body).gameId; // Extract gameId
+            this.$webSocketService.subscribe("/user/queue/pregame", (response) => {
+              const gameId = JSON.parse(response.body).gameId;
+              this.$webSocketService.subscribe(`/user/queue/${gameId}`)
               router.push(`/Game/${gameId}`); // Navigate to the game
+              this.$webSocketService.unsubscribe("/user/queue/pregame")
             });
-
             // Send the start message after subscription
             this.$webSocketService.sendMessage("/app/start", JSON.parse(message.body).message);
 
@@ -100,9 +101,15 @@ export default {
           }
 
         });
-        this.$webSocketService.subscribe("/user/queue/gameId", (response) => {
-          const gameId = JSON.parse(response.body).gameId;
+
+        let gameId = null;
+        this.$webSocketService.subscribe("/user/queue/pregame", (response) => {
+           gameId = JSON.parse(response.body).gameId;
+          this.$webSocketService.subscribe(`/user/queue/${gameId}`, (response) => {
+            console.log("1: " + JSON.parse(response.body).message)
+          })
           router.push(`/Game/${gameId}`); // Navigate to the game
+          this.$webSocketService.unsubscribe("/user/queue/pregame")
         });
 
 

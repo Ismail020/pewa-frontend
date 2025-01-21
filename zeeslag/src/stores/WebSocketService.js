@@ -64,7 +64,6 @@ class WebSocketService {
             const subscription = this.client.subscribe(destination, (message) => {
                 if (message) {
                         callback(message)
-                    console.log('Received message: ', message.body);
                 } else {
                     console.error("Empty message received")
                 }
@@ -73,7 +72,6 @@ class WebSocketService {
         } else {
             console.error("Websocket is not connected")
         }
-
     }
 
     unsubscribe(destination) {
