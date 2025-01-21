@@ -91,7 +91,7 @@ class WebSocketService {
                 headers,
                 body: JSON.stringify(message),
             });
-             console.log("Message sent: ", JSON.stringify(message) + "\n Headers are set at " +  headers)
+             console.log("Message sent: ", JSON.stringify(message) )
         } else {
             console.error("Websocket is not connected")
         }
