@@ -84,13 +84,14 @@ class WebSocketService {
         }
     }
 
-    sendMessage(destination, message) {
+    sendMessage(destination, message, headers = {}) {
         if (this.client && this.isConnected) {
             this.client.publish({
                 destination,
+                headers,
                 body: JSON.stringify(message),
             });
-             console.log("Message sent: ", JSON.stringify(message))
+             console.log("Message sent: ", JSON.stringify(message) + "\n Headers are set at " +  headers)
         } else {
             console.error("Websocket is not connected")
         }

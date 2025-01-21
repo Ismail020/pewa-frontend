@@ -102,8 +102,11 @@ export default {
     //needs to be fleshed out more still in case player is a real player.
     handleAllShipsPlaced(player) {
 
+      const gameId = this.$route.params.id
+      console.log("Game id extracted: ", gameId)
+
         this.p1Phase = 'gameplay'; // change phase to gameplay for P1
-        this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships, );
+        this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships, {"gameId": gameId});
 
       // check if both players are ready to start (boards are set up).
       if (this.p1Phase === 'gameplay' && this.p2Phase === 'gameplay') {
