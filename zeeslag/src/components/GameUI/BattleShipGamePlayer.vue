@@ -13,7 +13,7 @@
     <main class="grid grid-cols-4 gap-4 mt-6">
       <LogComponent :title="'P1 Log'" :moves="p1Moves" class="max-w-xs"/>
 
-        <BoardComponent
+        <BoardPlayerComponent
             :ships="p1Ships"
             :hits="p1Hits"
             :phase="p1Phase"
@@ -22,7 +22,7 @@
             @cellClicked="takeShot(this.currentPlayer, $event)"
         />
 
-        <BoardComponent
+        <BoardPlayerComponent
             ref="p2Board"
             :ships="p2Ships"
             :hits="p2Hits"
@@ -41,7 +41,7 @@
 <script>
 import HeaderComponent from './HeaderComponent.vue';
 import LogComponent from './LogComponent.vue';
-import BoardComponent from './BoardComponent.vue';
+import BoardPlayerComponent from './BoardComponent.vue';
 import ChatComponent from './ChatComponent.vue';
 import {jwtDecode} from "jwt-decode";
 
@@ -52,7 +52,7 @@ export default {
   components: {
     HeaderComponent,
     LogComponent,
-    BoardComponent,
+    BoardPlayerComponent,
     ChatComponent,
   },
   data() {
@@ -189,10 +189,13 @@ export default {
       //   }
       // }
     takeShot(player, cellId) {
+      console.log(player + " tried to shoot this cell: " + cellId)
       if (player === this.$route.query.player1) {
-        this.p1Moves.push(cellId);
+        console.log(this.p1Moves.push(cellId))
+        console.log(this.p1Moves)
       } else {
-        this.p2Moves.push(cellId);
+        console.log(this.p2Moves.push(cellId))
+        console.log(this.p2Moves)
       }
       this.$webSocketService.sendMessage(`/app/game/shots`, {
         location: cellId
