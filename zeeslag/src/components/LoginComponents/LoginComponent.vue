@@ -13,7 +13,7 @@ export default {
 
     async login() {
 
-      const url = import.meta.env.VITE_API_URL+"/api/v1/auth/authenticate";
+      const url = import.meta.env.VITE_API_URL + "/api/v1/auth/authenticate";
       try {
         const response = await fetch(url, {
           method: "POST",
@@ -34,10 +34,8 @@ export default {
         localStorage.setItem("token", data.token);
 
         const token = localStorage.getItem('token')
-        console.log("Token extracted: ", token)
 
         this.$webSocketService.connect(token)
-        console.log("Attempting connection from login")
 
         this.$router.push({path: "/selectgamemode"})
       } catch (error) {
@@ -51,92 +49,98 @@ export default {
 
 <template>
   <div class="background-container">
-    <div class="register-form">
+    <div class="form-container">
       <form @submit.prevent="login">
-        <div id="upper-input" class="input">
-          <input v-model="email" id="email" type="email" placeholder="Email" required />
+        <div class="input">
+          <input v-model="email" type="email" placeholder="Email" required/>
         </div>
         <div class="input">
-          <input v-model="password" id="password" type="password" placeholder="Password" required />
+          <input v-model="password" type="password" placeholder="Password" required/>
         </div>
-        <div class="input">
-          <button type="submit">LOGIN</button>
-          <div v-if="errorMessage" class="p-4 mb-4 text-sm text-red-800">{{ errorMessage }}</div>
-        </div>
+        <button type="submit">Log in </button>
+        <div v-if="errorMessage" class="message">{{ errorMessage }}</div>
       </form>
-      <div class="input">
-        <span id="account">Don't have an account?</span>
-        <span id="register">
-          <router-link to="/register"> Register! </router-link></span>
+      <div class="links">
+        <p>Don't have an account?
+          <router-link to="/register" class="link"> Register! </router-link></p>
+        <p>
+          <router-link to="/forgot" class="link"> Forgot Password?</router-link>
+        </p>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.input {
-  background-color: #383B45;
-  padding: 30px;
-  text-align: center;
-}
-
 .background-container {
   display: flex;
   justify-content: center;
-  background-color: #383B45;
-  width: 100vw;
+  align-items: center;
+  background-color: #2d3748;
+  font-size: 20px;
+  color: white;
 }
 
-.register-form {
-  margin-top: 30px;
+.form-container {
+  background-color: #2d3748;
+  border-radius: 2px;
+  padding: 20px;
+  text-align: center;
+  width: 33vw;
   display: flex;
   flex-direction: column;
-  background-color: #F6F6F6;
-  border-radius: 2px;
+}
+
+.input {
+  margin-bottom: 15px;
+}
+
+input {
+  width: 80%;
+  padding: 5px;
+  font-size: 18px;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 5px;
+  color: black;
 }
 
 button {
   background-color: darkred;
+  transition: background-color 0.3s, transform 0.2s;
+  cursor: pointer;
   color: white;
-  text-align: center;
-  font-size: 30px;
   font-weight: bold;
-  border: 2px solid white;
-  margin: 5px;
-  border-radius: 5px;
-  padding: 10px;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
 }
 
 button:hover {
-  color: #3645a6;
-  border: 2px solid #3645a6;
+  color: #909df3;
+  border: 1px solid #909df3;
 }
 
-#account {
-  color: white;
-  background-color: #383B45;
+.link {
+  color: #909df3;
+  background-color: #2d3748;
+}
+
+.links {
   font-size: 20px;
+  margin-top: 10px;
+
 }
 
-#register {
-  color: #4e60d5;
-  font-weight: bold;
-  font-size: 20px;
+.link:hover {
+  text-decoration: underline;
 }
 
-#upper-input {
-  padding-top: 60px;
+.message {
+  color: #ff6b6b;
+  margin-top: 10px;
 }
 
-#password,
-#email {
-  padding: 10px;
-  font-size: 20px;
-  width: 100%;
-  text-align: center;
-}
 
-#hidden {
-  display: none;
-}
+
 </style>

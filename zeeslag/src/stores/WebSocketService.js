@@ -11,8 +11,7 @@ class WebSocketService {
     }
 
     connect(token) {
-        // const decodedToken = jwtDecode(this.token);
-        // this.username = decodedToken.sub;
+
         this.token = token;
 
         this.client = new Client({
@@ -26,11 +25,7 @@ class WebSocketService {
             onConnect: () => {
                 this.isConnected = true;
                 console.log("Websocket connected");
-                //this.subscribe('/app/start');
 
-                //console.log(`Subscribing to: /user/${this.username}/queue/game`);
-
-                //this.subscribe('/user/queue/game')
             },
             onDisconnect : () => {
                 this.isConnected = false;
