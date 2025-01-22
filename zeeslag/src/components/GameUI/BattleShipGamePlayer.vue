@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-blue-900 text-white p-4">
     <HeaderComponent
-        :player1="leftPlayer"
+        :player1="currentPlayer"
         :player2="rightPlayer"
         :round="round"
         :turn="turn"
@@ -13,24 +13,24 @@
     <main class="grid grid-cols-4 gap-4 mt-6">
       <LogComponent :title="'P1 Log'" :moves="p1Moves" class="max-w-xs"/>
 
-      <BoardComponent
-          :ships="p1Ships"
-          :hits="p1Hits"
-          :phase="p1Phase"
-          :playerType="'human'"
-          @allShipsPlaced="handleAllShipsPlaced()"
-          @cellClicked="takeShot(leftPlayer, $event)"
-      />
+        <BoardComponent
+            :ships="p1Ships"
+            :hits="p1Hits"
+            :phase="p1Phase"
+            :playerType="'human'"
+            @allShipsPlaced="handleAllShipsPlaced()"
+            @cellClicked="takeShot(this.currentPlayer, $event)"
+        />
 
-      <BoardComponent
-          ref="p2Board"
-          :ships="p2Ships"
-          :hits="p2Hits"
-          :phase="p2Phase"
-          :playerType="'CPU'"
-          @allShipsPlaced="handleAllShipsPlaced()"
-          @cellClicked="takeShot(rightPlayer, $event)"
-      />
+        <BoardComponent
+            ref="p2Board"
+            :ships="p2Ships"
+            :hits="p2Hits"
+            :phase="p2Phase"
+            :playerType="'CPU'"
+            @allShipsPlaced="handleAllShipsPlaced()"
+            @cellClicked="takeShot(rightPlayer, $event)"
+        />
 
       <LogComponent :title="'P2 Log'" :moves="p2Moves" class="max-w-xs"/>
     </main>
@@ -98,20 +98,12 @@ export default {
     };
   },
   computed: {
-    // Always display the current client as leftPlayer
-    leftPlayer() {
-      if (this.player1 === this.currentPlayer) {
-        return this.player1;
-      } else {
-        return this.player2;
-      }
-    }, // Display the opponent as rightPlayer
+
     rightPlayer() {
-      if (this.player1 === this.currentPlayer) {
-        return this.player1;
-      } else {
-        return this.player2;
-      }
+      console.log("player1 : " + this.player1 )
+      console.log("player2 : " + this.player2 )
+      console.log("currentplayer : " +this.currentPlayer )
+      return this.player1 === this.currentPlayer ? this.player2 : this.player1;
     }
   },
   mounted () {
