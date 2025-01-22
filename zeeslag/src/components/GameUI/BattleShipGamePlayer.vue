@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen bg-blue-900 text-white p-4">
     <HeaderComponent
-        :player1="player1"
-        :player2="player2"
+        :player1="leftPlayer"
+        :player2="rightPlayer"
         :round="round"
         :turn="turn"
         :score1="score1"
@@ -18,8 +18,8 @@
           :hits="p1Hits"
           :phase="p1Phase"
           :playerType="'human'"
-          @allShipsPlaced="handleAllShipsPlaced('p1')"
-          @cellClicked="takeShot('p2', $event)"
+          @allShipsPlaced="handleAllShipsPlaced()"
+          @cellClicked="takeShot(leftPlayer, $event)"
       />
 
       <BoardComponent
@@ -28,8 +28,8 @@
           :hits="p2Hits"
           :phase="p2Phase"
           :playerType="'CPU'"
-          @allShipsPlaced="handleAllShipsPlaced('p2')"
-          @cellClicked="takeShot('p1', $event)"
+          @allShipsPlaced="handleAllShipsPlaced()"
+          @cellClicked="takeShot(rightPlayer, $event)"
       />
 
       <LogComponent :title="'P2 Log'" :moves="p2Moves" class="max-w-xs"/>
@@ -43,6 +43,7 @@ import HeaderComponent from './HeaderComponent.vue';
 import LogComponent from './LogComponent.vue';
 import BoardComponent from './BoardComponent.vue';
 import ChatComponent from './ChatComponent.vue';
+import {jwtDecode} from "jwt-decode";
 
 
 
@@ -57,8 +58,9 @@ export default {
   data() {
     return {
       wsService:  null,
-      player1: "xX_sampleUsername123_Xx",
-      player2: "xX_sampleUsername345_Xx",
+      currentPlayer: jwtDecode(localStorage.getItem("token")).sub,
+      player1: this.$route.query.player1,
+      player2: this.$route.query.player2,
       round: 1, //starts at round 1, goes up per turn done by player 2. could still be changed for if the first player to start is random.
       turn: "P1", // could still be randomised when adding multiplayer
       score1: 0,
@@ -95,12 +97,29 @@ export default {
       player2Type: 'CPU',
     };
   },
+  computed: {
+    // Always display the current client as leftPlayer
+    leftPlayer() {
+      if (this.player1 === this.currentPlayer) {
+        return this.player1;
+      } else {
+        return this.player2;
+      }
+    }, // Display the opponent as rightPlayer
+    rightPlayer() {
+      if (this.player1 === this.currentPlayer) {
+        return this.player1;
+      } else {
+        return this.player2;
+      }
+    }
+  },
   mounted () {
   },
   methods: {
     //method which is activated in the event that all ships have been placed from the player's side.
     //needs to be fleshed out more still in case player is a real player.
-    handleAllShipsPlaced(player) {
+    handleAllShipsPlaced() {
 
       const gameId = this.$route.params.id
       console.log("Game id extracted: ", gameId)
@@ -108,8 +127,14 @@ export default {
         this.p1Phase = 'gameplay'; // change phase to gameplay for P1
         this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships, {"gameId": gameId});
 
+
+
       // check if both players are ready to start (boards are set up).
       if (this.p1Phase === 'gameplay' && this.p2Phase === 'gameplay') {
+        this.$webSocketService.subscribe("/queue/game/shots", (response) => {
+          let shotinfo = JSON.parse(response.body).message
+        });
+        console.log("starting game")
         this.startGame();
       }
     },
@@ -141,70 +166,58 @@ export default {
       }
     },
 
-    //selects a random location (a random id in the board) to shoot at.
-    cpuTakeTurn() {
-      //create variable to use for the randomly shot at id.
-      let cellId = Math.floor(Math.random() * 100) //gets random cellid till 100 (size of board)
-
-      // while the previously chosen cellId is either already included in the CPU's moves list, or the target (player 1)'s hits list
-      // finds a new cellId randomly till 100.
-      //this loops till a valid cellId is found (neither already made move before,
-      while (this.p2Moves.includes(cellId) || this.p1Hits.some(hit => hit.cellId === cellId)) {
-        cellId = Math.floor(Math.random() * 100);
-      }
-      // attempt the shot
-      console.log("CPU choosing cell: "+ cellId);
-      this.takeShot('p2', cellId);
-    },
 
     //shoots at the target @player 's board on the @cellId location
+    // takeShot(player, cellId) {
+      // if (player === this.$route.query.player1) {
+      //   this.p1Moves.push(cellId); // record player 1's move
+      //   const hitShip = this.p2Ships.find(ship => ship.locations.includes(cellId));
+      //   if (hitShip) {
+      //     this.p2Hits.push({cellId, hit: true}); // record player 2's ship being hit
+      //     this.score1++; // player score goes up
+      //     console.log("P1 hit! Cell:" + cellId);
+      //     //
+      //   } else {
+      //     this.p2Hits.push({cellId, hit: false});
+      //     console.log("P1 miss. Cell: " + cellId);
+      //     //
+      //   }
+      // } else {
+      //   this.p2Moves.push(cellId); // record player 2's move
+      //   const hitShip = this.p1Ships.find(ship => ship.locations.includes(cellId));
+      //   if (hitShip) {
+      //     this.p1Hits.push({cellId, hit: true});
+      //     this.score2++;
+      //     //
+      //     console.log("P2 hit! Cell: " + cellId);
+      //   } else {
+      //     this.p1Hits.push({cellId, hit: false});
+      //     //
+      //     console.log("P2 miss. Cell: " + cellId);
+      //   }
+      // }
     takeShot(player, cellId) {
-      if (player === 'p1') {
-        this.p1Moves.push(cellId); // record player 1's move
-        const hitShip = this.p2Ships.find(ship => ship.locations.includes(cellId));
-        if (hitShip) {
-          this.p2Hits.push({cellId, hit: true}); // record player 2's ship being hit
-          this.score1++; // player score goes up
-          console.log("P1 hit! Cell:" + cellId);
-        } else {
-          this.p2Hits.push({cellId, hit: false});
-          console.log("P1 miss. Cell: " + cellId);
-        }
+      if (player === this.$route.query.player1) {
+        this.p1Moves.push(cellId);
       } else {
-        this.p2Moves.push(cellId); // record player 2's move
-        const hitShip = this.p1Ships.find(ship => ship.locations.includes(cellId));
-        if (hitShip) {
-          this.p1Hits.push({cellId, hit: true});
-          this.score2++;
-          console.log("P2 hit! Cell: " + cellId);
-        } else {
-          this.p1Hits.push({cellId, hit: false});
-          console.log("P2 miss. Cell: " + cellId);
-        }
+        this.p2Moves.push(cellId);
       }
-
-      //checks after every shot if all ships are sunk, could be changed by checking if the number of hit ship pieces is equal to the amount of cells the ships total.
-      if (this.checkAllShipsSunk('p1')) {
-        console.log("Player 1's ships have been sunk. Player 2 wins!");
-        this.endGame('p2'); // Player 2 wins
-      } else if (this.checkAllShipsSunk('p2')) {
-        console.log("Player 2's ships have been sunk. Player 1 wins!");
-        this.endGame('p1'); // Player 1 wins
-      } else {
-        // switch turns after logging the hit/miss
-        this.switchTurn(); // Always switch turns after a hit/miss
-      }
+      this.$webSocketService.sendMessage(`/app/game/shots`, {
+        location: cellId
+      });
     },
-    checkAllShipsSunk(player) {
-      const ships = player === 'p1' ? this.p1Ships : this.p2Ships;
-      const hits = player === 'p1' ? this.p1Hits : this.p2Hits;
 
-      return ships.every(ship =>
-          ship.locations.every(location =>
-              hits.some(hit => hit.cellId === location && hit.hit)
-          )
-      );
-    },
+    //
+    // checkAllShipsSunk(player) {
+    //   const ships = player === 'p1' ? this.p1Ships : this.p2Ships;
+    //   const hits = player === 'p1' ? this.p1Hits : this.p2Hits;
+    //
+    //   return ships.every(ship =>
+    //       ship.locations.every(location =>
+    //           hits.some(hit => hit.cellId === location && hit.hit)
+    //       )
+    //   );
+    // },
     //ends the game and announces a winner, resets the game after clicking ok on the alert.
     endGame(winner) {
       alert(winner + " wins!");

@@ -105,10 +105,18 @@ export default {
         let gameId = null;
         this.$webSocketService.subscribe("/user/queue/pregame", (response) => {
            gameId = JSON.parse(response.body).gameId;
+           let player1name = JSON.parse(response.body).player1;
+           let player2name = JSON.parse(response.body).player2;
+
           this.$webSocketService.subscribe(`/user/queue/${gameId}`, (response) => {
             console.log("1: " + JSON.parse(response.body).message)
           })
-          router.push(`/Game/${gameId}`); // Navigate to the game
+          router.push({
+            path: `/Game/${gameId}`,
+          query: {
+              player1: player1name,
+              player2: player2name}
+          }); // Navigate to the game
           this.$webSocketService.unsubscribe("/user/queue/pregame")
         });
 
