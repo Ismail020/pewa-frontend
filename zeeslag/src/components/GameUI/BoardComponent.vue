@@ -93,6 +93,7 @@ export default {
     //in case the phase is in gameplay mode(all ships have been placed), it emits the event to the board's @cellClicked.
     // this then forwards the situation to attempting to take a shot.
     clickCell(cellId) {
+      console.log("cellclicked" + cellId)
       if (this.phase === 'setup' && this.selectedShipIndex !== null && this.playerType === 'human') {
         const ship = this.ships[this.selectedShipIndex];
         const validPlacement = this.validatePlacement(cellId, ship.size);
@@ -104,6 +105,7 @@ export default {
         }
       } else if (this.phase === 'gameplay') {
         // emit the event and the relevant cell to the element's @cellClicked condition.
+        console.log("this  = ")
         this.$emit('cellClicked', cellId);
       }
     },

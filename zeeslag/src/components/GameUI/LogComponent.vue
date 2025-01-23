@@ -2,13 +2,12 @@
   <div class="bg-gray-800 p-4 rounded-md w-[320px] h-[536px]">
     <h2 class="font-bold mb-2">{{ title }}</h2>
     <ul class="space-y-1 overflow-auto h-[90%]">
-      <li v-for="(move, index) in moves" :key="index">{{ index + 1 }}: {{ translateMove(move) }} + {{ move }}</li>
+      <li v-for="(move, index) in moves" :key="index">{{ index + 1 }}: {{ translateMove(move) }}</li>
     </ul>
   </div>
 </template>
 
 <script>
-//TODO: add move hit or miss status to the log, can be done via taking enemey hits list and comparing current move's id to enemy's hit list for occurences of this move's target  cell.
 export default {
   name: "LogComponent",
   props: {

@@ -41,7 +41,7 @@
 <script>
 import HeaderComponent from './HeaderComponent.vue';
 import LogComponent from './LogComponent.vue';
-import BoardPlayerComponent from './BoardComponent.vue';
+import BoardPlayerComponent from './BoardPlayerComponent.vue';
 import ChatComponent from './ChatComponent.vue';
 import {jwtDecode} from "jwt-decode";
 
@@ -117,18 +117,57 @@ export default {
       console.log("Game id extracted: ", gameId)
 
         this.p1Phase = 'gameplay'; // change phase to gameplay for P1
+        this.p2Phase = 'gameplay';
+      console.log(this.p1Phase)
         this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships, {"gameId": gameId});
 
 
 
       // check if both players are ready to start (boards are set up).
       if (this.p1Phase === 'gameplay' && this.p2Phase === 'gameplay') {
-        this.$webSocketService.subscribe("/queue/game/shots", (response) => {
-          let shotinfo = JSON.parse(response.body).message
+        console.log("yo!!!!!!")
+
+        this.$webSocketService.subscribe("/user/queue/game/shots", (response) => {
+
+           let shotinfo = JSON.parse(response.body)
+
+          this.handleShotResult(shotinfo.location, shotinfo.result, shotinfo.player)
+          console.log(shotinfo)
+          console.log("result : " + shotinfo.result)
+
+
+
         });
         console.log("starting game")
         this.startGame();
       }
+    },
+
+
+    handleShotResult(cellId, result, shooter) {
+
+      console.log("result : " + result)
+
+        if (result === "hit") {
+          // Add to hits for the opponent, as the current player hit their opponent
+          if (this.currentPlayer === shooter) {
+            this.p2Hits.push({cellId, hit: true}); // Player 2 gets hit
+            this.p1Moves.push({cellId, hit: true}); // Log the move for Player 1
+          }
+          else if (this.currentPlayer !== shooter) {
+            this.p1Hits.push({cellId, hit: true}); // Player 1 gets hit
+            this.p2Moves.push({cellId, hit: true}); // Log the move for Player 2
+          }
+        }
+        else if (result === "miss") {
+          // Log the miss for the current player
+          if (this.currentPlayer === shooter) {
+            this.p1Moves.push({cellId, hit: false}); // Log the miss for Player 1
+          }
+          else if (this.currentPlayer !== shooter) {
+            this.p2Moves.push({cellId, hit: false}); // Log the miss for Player 2
+          }
+        }
     },
 
     //starts the game
@@ -159,60 +198,20 @@ export default {
     },
 
 
-    //shoots at the target @player 's board on the @cellId location
-    // takeShot(player, cellId) {
-      // if (player === this.$route.query.player1) {
-      //   this.p1Moves.push(cellId); // record player 1's move
-      //   const hitShip = this.p2Ships.find(ship => ship.locations.includes(cellId));
-      //   if (hitShip) {
-      //     this.p2Hits.push({cellId, hit: true}); // record player 2's ship being hit
-      //     this.score1++; // player score goes up
-      //     console.log("P1 hit! Cell:" + cellId);
-      //     //
-      //   } else {
-      //     this.p2Hits.push({cellId, hit: false});
-      //     console.log("P1 miss. Cell: " + cellId);
-      //     //
-      //   }
-      // } else {
-      //   this.p2Moves.push(cellId); // record player 2's move
-      //   const hitShip = this.p1Ships.find(ship => ship.locations.includes(cellId));
-      //   if (hitShip) {
-      //     this.p1Hits.push({cellId, hit: true});
-      //     this.score2++;
-      //     //
-      //     console.log("P2 hit! Cell: " + cellId);
-      //   } else {
-      //     this.p1Hits.push({cellId, hit: false});
-      //     //
-      //     console.log("P2 miss. Cell: " + cellId);
-      //   }
-      // }
+
     takeShot(player, cellId) {
       console.log(player + " tried to shoot this cell: " + cellId)
-      if (player === this.$route.query.player1) {
+      if (player === this.currentPlayer) {
         console.log(this.p1Moves.push(cellId))
         console.log(this.p1Moves)
       } else {
         console.log(this.p2Moves.push(cellId))
         console.log(this.p2Moves)
       }
-      this.$webSocketService.sendMessage(`/app/game/shots`, {
-        location: cellId
-      });
+      this.$webSocketService.sendMessage(`/app/game/shots`,  {location: cellId}, {"gameId": this.$route.params.id});
+
     },
 
-    //
-    // checkAllShipsSunk(player) {
-    //   const ships = player === 'p1' ? this.p1Ships : this.p2Ships;
-    //   const hits = player === 'p1' ? this.p1Hits : this.p2Hits;
-    //
-    //   return ships.every(ship =>
-    //       ship.locations.every(location =>
-    //           hits.some(hit => hit.cellId === location && hit.hit)
-    //       )
-    //   );
-    // },
     //ends the game and announces a winner, resets the game after clicking ok on the alert.
     endGame(winner) {
       alert(winner + " wins!");

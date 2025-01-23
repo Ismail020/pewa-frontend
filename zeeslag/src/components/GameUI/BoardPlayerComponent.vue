@@ -94,7 +94,9 @@ export default {
     // this then forwards the situation to attempting to take a shot.
     clickCell(cellId) {
       console.log("clicked " + cellId)
+      console.log(this.phase)
       if (this.phase === 'setup' && this.selectedShipIndex !== null && this.playerType === 'human') {
+
         const ship = this.ships[this.selectedShipIndex];
         const validPlacement = this.validatePlacement(cellId, ship.size);
         if (validPlacement) {
@@ -103,7 +105,9 @@ export default {
         } else {
           console.log("Invalid placement for " + ship.name + " at cell " + cellId);
         }
-      } else if (this.phase === 'gameplay') {
+      }
+      else if (this.phase === 'gameplay') {
+        console.log("else if this.phase - gameplay")
         // emit the event and the relevant cell to the element's @cellClicked condition.
         this.$emit('cellClicked', cellId);
       }
