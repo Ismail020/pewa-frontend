@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
@@ -52,6 +52,16 @@ const router = createRouter({
       name: 'Game',
       component: () => import('../views/AgainstPlayerUIView.vue')
     },
+    {
+            path: '/forgot',
+            name: 'forgot',
+            component: () => import('../components/LoginComponents/ForgotPassword.vue')
+        },
+        {
+            path: '/reset-password',
+            name: 'reset',
+            component: () => import('../components/LoginComponents/ResetPassword.vue'),
+        }
   ]
 })
 
