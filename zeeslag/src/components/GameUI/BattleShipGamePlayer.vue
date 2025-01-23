@@ -100,40 +100,32 @@ export default {
   computed: {
 
     rightPlayer() {
-      console.log("player1 : " + this.player1 )
-      console.log("player2 : " + this.player2 )
-      console.log("currentplayer : " +this.currentPlayer )
       return this.player1 === this.currentPlayer ? this.player2 : this.player1;
     }
   },
   mounted () {
   },
   methods: {
-    //method which is activated in the event that all ships have been placed from the player's side.
-    //needs to be fleshed out more still in case player is a real player.
+
     handleAllShipsPlaced() {
 
       const gameId = this.$route.params.id
-      console.log("Game id extracted: ", gameId)
 
-        this.p1Phase = 'gameplay'; // change phase to gameplay for P1
+        this.p1Phase = 'gameplay';
         this.p2Phase = 'gameplay';
-      console.log(this.p1Phase)
         this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships, {"gameId": gameId});
 
 
 
       // check if both players are ready to start (boards are set up).
       if (this.p1Phase === 'gameplay' && this.p2Phase === 'gameplay') {
-        console.log("yo!!!!!!")
 
         this.$webSocketService.subscribe("/user/queue/game/shots", (response) => {
 
            let shotinfo = JSON.parse(response.body)
 
-          this.handleShotResult(shotinfo.location, shotinfo.result, shotinfo.player)
           console.log(shotinfo)
-          console.log("result : " + shotinfo.result)
+          this.handleShotResult(shotinfo.location, shotinfo.result, shotinfo.shooter)
 
 
 
@@ -146,7 +138,6 @@ export default {
 
     handleShotResult(cellId, result, shooter) {
 
-      console.log("result : " + result)
 
         if (result === "hit") {
           // Add to hits for the opponent, as the current player hit their opponent
@@ -202,11 +193,9 @@ export default {
     takeShot(player, cellId) {
       console.log(player + " tried to shoot this cell: " + cellId)
       if (player === this.currentPlayer) {
-        console.log(this.p1Moves.push(cellId))
-        console.log(this.p1Moves)
+        this.p1Moves.push(cellId)
       } else {
-        console.log(this.p2Moves.push(cellId))
-        console.log(this.p2Moves)
+        this.p2Moves.push(cellId)
       }
       this.$webSocketService.sendMessage(`/app/game/shots`,  {location: cellId}, {"gameId": this.$route.params.id});
 
