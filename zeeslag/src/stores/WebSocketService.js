@@ -1,5 +1,4 @@
 import {Client} from '@stomp/stompjs'
-import { jwtDecode } from "jwt-decode";
 
 class WebSocketService {
     constructor(endpoint) {
@@ -59,7 +58,6 @@ class WebSocketService {
             const subscription = this.client.subscribe(destination, (message) => {
                 if (message) {
                         callback(message)
-                    console.log('Received message: ', message.body);
                 } else {
                     console.error("Empty message received")
                 }
@@ -68,7 +66,6 @@ class WebSocketService {
         } else {
             console.error("Websocket is not connected")
         }
-
     }
 
     unsubscribe(destination) {
@@ -79,13 +76,14 @@ class WebSocketService {
         }
     }
 
-    sendMessage(destination, message) {
+    sendMessage(destination, message, headers = {}) {
         if (this.client && this.isConnected) {
             this.client.publish({
                 destination,
+                headers,
                 body: JSON.stringify(message),
             });
-             console.log("Message sent: ", JSON.stringify(message))
+             console.log("Message sent: ", JSON.stringify(message) )
         } else {
             console.error("Websocket is not connected")
         }

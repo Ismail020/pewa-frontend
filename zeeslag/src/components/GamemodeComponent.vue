@@ -27,6 +27,7 @@
 <script>
 import {usePlayerStore} from "@/stores/playerStore.js";
 import { jwtDecode } from "jwt-decode";
+import router from "@/router/index.js";
 
 export default {
   name: "GamemodeComponent",
@@ -58,18 +59,7 @@ export default {
       // this.$webSocketService.sendMessage("/app/start", {});
       console.log("Initiating queue")
 
-      //   try {
-      //     // this.$webSocketService.subscribe('/user/queue/game', );
-      //     this.$webSocketService.subscribe("/topic/info");
-      //     const message = messageOutput.body;
-      //     this.$webSocketService.sendMessage("/queue/enter", message);
-      //   }
-      //   catch(error) {
-      //     console.error("Subscription to game message endpoint failed")
-      //   }
-      //   this.$router.push({ path: "/matchMaking" });
-      //
-      // },
+
       try {
         // Subscribe to the topic to receive messages from the server
         this.$webSocketService.subscribe("/topic/info", (message) => {
@@ -91,6 +81,45 @@ export default {
         // Send a message to join the queue with the user's information
         const message = "Hi, I'm joining the queue!"; // Replace with actual message if needed
         this.$webSocketService.sendMessage("/app/queue/enter", message);
+        this.$webSocketService.subscribe("/user/queue/challenged", (message) => {
+
+
+         const accepted = confirm(JSON.parse(message.body).message + " challenged you!")
+          if (accepted) {
+            // Ensure subscription before responding
+            this.$webSocketService.subscribe("/user/queue/pregame", (response) => {
+              const gameId = JSON.parse(response.body).gameId;
+              this.$webSocketService.subscribe(`/user/queue/${gameId}`)
+              router.push(`/Game/${gameId}`); // Navigate to the game
+              this.$webSocketService.unsubscribe("/user/queue/pregame")
+            });
+            // Send the start message after subscription
+            this.$webSocketService.sendMessage("/app/start", JSON.parse(message.body).message);
+
+            // Unsubscribe from the challenge topic
+            this.$webSocketService.unsubscribe("/user/queue/challenged");
+          }
+
+        });
+
+        let gameId = null;
+        this.$webSocketService.subscribe("/user/queue/pregame", (response) => {
+           gameId = JSON.parse(response.body).gameId;
+           let player1name = JSON.parse(response.body).player1;
+           let player2name = JSON.parse(response.body).player2;
+
+          this.$webSocketService.subscribe(`/user/queue/${gameId}`, (response) => {
+            console.log("1: " + JSON.parse(response.body).message)
+          })
+          router.push({
+            path: `/Game/${gameId}`,
+          query: {
+              player1: player1name,
+              player2: player2name}
+          }); // Navigate to the game
+          this.$webSocketService.unsubscribe("/user/queue/pregame")
+        });
+
 
         // Navigate to matchmaking page
         this.$router.push({path: "/matchMaking"});

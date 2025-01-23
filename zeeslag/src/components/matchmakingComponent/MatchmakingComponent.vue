@@ -14,16 +14,9 @@
         <td class="border border-gray-300 px-5 py-2">
           <button
               class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-              @click="joinPlayer(player)"
-          >
-            Join
-          </button>
-          <button
-              v-if="isChallenger(player)"
-              class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-700"
               @click="challengePlayer(player)"
           >
-            Challenge
+            challenge
           </button>
         </td>
       </tr>
@@ -59,14 +52,13 @@ export default {
       const playerStore = usePlayerStore(); // Access the store
       playerStore.setPlayers(newPlayers); // Update the state with a new list of players
     },
-    joinPlayer(playerId) {
-      // Emit the joinPlayer event to the parent
-      this.$emit("joinPlayer", playerId);
-    },
 
-    challengePlayer(playerId) {
-      // Emit the challengePlayer event to the parent
-      this.$emit("challengePlayer", playerId);
+
+    challengePlayer(player) {
+      console.log("challenged clicked!")
+      console.log(player);
+
+      this.$webSocketService.sendMessage("/app/queue/challenge", player);
     },
 
     isChallenger(player) {

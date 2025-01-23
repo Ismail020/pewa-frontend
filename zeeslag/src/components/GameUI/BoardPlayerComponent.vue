@@ -53,7 +53,7 @@
 
 <script>
 export default {
-  name: "BoardComponent",
+  name: "BoardPlayerComponent",
   props: {
     phase: {
       type: String,
@@ -81,10 +81,10 @@ export default {
   methods: {
     //select a ship to place, activated by selecting a ship in the list of ships in setup phase. selects from the list of ships via @index.
     selectShip(index) {
+
       const ship = this.ships[index];
       if (!ship.placed && this.playerType === 'human') { // only select if human and all ships arent already placed.
         this.selectedShipIndex = index;
-        console.log("Selected ship: " + ship.name);
       }
     },
 
@@ -93,8 +93,10 @@ export default {
     //in case the phase is in gameplay mode(all ships have been placed), it emits the event to the board's @cellClicked.
     // this then forwards the situation to attempting to take a shot.
     clickCell(cellId) {
-      console.log("cellclicked" + cellId)
+      console.log("clicked " + cellId)
+      console.log(this.phase)
       if (this.phase === 'setup' && this.selectedShipIndex !== null && this.playerType === 'human') {
+
         const ship = this.ships[this.selectedShipIndex];
         const validPlacement = this.validatePlacement(cellId, ship.size);
         if (validPlacement) {
@@ -103,9 +105,10 @@ export default {
         } else {
           console.log("Invalid placement for " + ship.name + " at cell " + cellId);
         }
-      } else if (this.phase === 'gameplay') {
+      }
+      else if (this.phase === 'gameplay') {
+        console.log("else if this.phase - gameplay")
         // emit the event and the relevant cell to the element's @cellClicked condition.
-        console.log("this  = ")
         this.$emit('cellClicked', cellId);
       }
     },

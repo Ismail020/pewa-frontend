@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen bg-blue-900 text-white p-4">
     <HeaderComponent
-        :player1="player1"
-        :player2="player2"
+        :player1="currentPlayer"
+        :player2="rightPlayer"
         :round="round"
         :turn="turn"
         :score1="score1"
@@ -13,24 +13,24 @@
     <main class="grid grid-cols-4 gap-4 mt-6">
       <LogComponent :title="'P1 Log'" :moves="p1Moves" class="max-w-xs"/>
 
-      <BoardComponent
-          :ships="p1Ships"
-          :hits="p1Hits"
-          :phase="p1Phase"
-          :playerType="'human'"
-          @allShipsPlaced="handleAllShipsPlaced('p1')"
-          @cellClicked="takeShot('p2', $event)"
-      />
+        <BoardPlayerComponent
+            :ships="p1Ships"
+            :hits="p1Hits"
+            :phase="p1Phase"
+            :playerType="'human'"
+            @allShipsPlaced="handleAllShipsPlaced()"
+            @cellClicked="takeShot(this.currentPlayer, $event)"
+        />
 
-      <BoardComponent
-          ref="p2Board"
-          :ships="p2Ships"
-          :hits="p2Hits"
-          :phase="p2Phase"
-          :playerType="'CPU'"
-          @allShipsPlaced="handleAllShipsPlaced('p2')"
-          @cellClicked="takeShot('p1', $event)"
-      />
+        <BoardPlayerComponent
+            ref="p2Board"
+            :ships="p2Ships"
+            :hits="p2Hits"
+            :phase="p2Phase"
+            :playerType="'CPU'"
+            @allShipsPlaced="handleAllShipsPlaced()"
+            @cellClicked="takeShot(rightPlayer, $event)"
+        />
 
       <LogComponent :title="'P2 Log'" :moves="p2Moves" class="max-w-xs"/>
     </main>
@@ -41,8 +41,9 @@
 <script>
 import HeaderComponent from './HeaderComponent.vue';
 import LogComponent from './LogComponent.vue';
-import BoardComponent from './BoardComponent.vue';
+import BoardPlayerComponent from './BoardPlayerComponent.vue';
 import ChatComponent from './ChatComponent.vue';
+import {jwtDecode} from "jwt-decode";
 
 
 
@@ -51,14 +52,15 @@ export default {
   components: {
     HeaderComponent,
     LogComponent,
-    BoardComponent,
+    BoardPlayerComponent,
     ChatComponent,
   },
   data() {
     return {
       wsService:  null,
-      player1: "xX_sampleUsername123_Xx",
-      player2: "xX_sampleUsername345_Xx",
+      currentPlayer: jwtDecode(localStorage.getItem("token")).sub,
+      player1: this.$route.query.player1,
+      player2: this.$route.query.player2,
       round: 1, //starts at round 1, goes up per turn done by player 2. could still be changed for if the first player to start is random.
       turn: "P1", // could still be randomised when adding multiplayer
       score1: 0,
@@ -95,35 +97,68 @@ export default {
       player2Type: 'CPU',
     };
   },
+  computed: {
+
+    rightPlayer() {
+      return this.player1 === this.currentPlayer ? this.player2 : this.player1;
+    }
+  },
   mounted () {
   },
   methods: {
-    //method which is activated in the event that all ships have been placed from the player's side.
-    //needs to be fleshed out more still in case player is a real player.
-    handleAllShipsPlaced(player) {
 
-      if (player === 'p1') {
-        this.p1Phase = 'gameplay'; // change phase to gameplay for P1
-        // if P2 is CPU, randomize their ship placement
+    handleAllShipsPlaced() {
 
-        if (this.player2Type === 'CPU') {
-          // searches the game's references for the p2 board property (see 2nd board html element)
-          // if player2 is a cpu, they don't get to decide their own board. thus it must be placed randomly.
-          this.$refs.p2Board.randomizeShipPlacement();
+      const gameId = this.$route.params.id
 
-        }
-        this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships);
-
-      } else if (player === 'p2') {
-        //needs to be fleshed out still, for now
+        this.p1Phase = 'gameplay';
         this.p2Phase = 'gameplay';
-        this.$webSocketService.sendMessage("/app/ships-placed", this.p2Ships)
-      }
+        this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships, {"gameId": gameId});
+
+
 
       // check if both players are ready to start (boards are set up).
       if (this.p1Phase === 'gameplay' && this.p2Phase === 'gameplay') {
+
+        this.$webSocketService.subscribe("/user/queue/game/shots", (response) => {
+
+           let shotinfo = JSON.parse(response.body)
+
+          console.log(shotinfo)
+          this.handleShotResult(shotinfo.location, shotinfo.result, shotinfo.shooter)
+
+
+
+        });
+        console.log("starting game")
         this.startGame();
       }
+    },
+
+
+    handleShotResult(cellId, result, shooter) {
+
+
+        if (result === "hit") {
+          // Add to hits for the opponent, as the current player hit their opponent
+          if (this.currentPlayer === shooter) {
+            this.p2Hits.push({cellId, hit: true}); // Player 2 gets hit
+            this.p1Moves.push({cellId, hit: true}); // Log the move for Player 1
+          }
+          else if (this.currentPlayer !== shooter) {
+            this.p1Hits.push({cellId, hit: true}); // Player 1 gets hit
+            this.p2Moves.push({cellId, hit: true}); // Log the move for Player 2
+          }
+        }
+        else if (result === "miss") {
+          // Log the miss for the current player
+          if (this.currentPlayer === shooter) {
+            this.p1Moves.push({cellId, hit: false}); // Log the miss for Player 1
+          }
+          else if (this.currentPlayer !== shooter) {
+            this.p2Moves.push({cellId, hit: false}); // Log the miss for Player 2
+          }
+        }
     },
 
     //starts the game
@@ -153,70 +188,19 @@ export default {
       }
     },
 
-    //selects a random location (a random id in the board) to shoot at.
-    cpuTakeTurn() {
-      //create variable to use for the randomly shot at id.
-      let cellId = Math.floor(Math.random() * 100) //gets random cellid till 100 (size of board)
 
-      // while the previously chosen cellId is either already included in the CPU's moves list, or the target (player 1)'s hits list
-      // finds a new cellId randomly till 100.
-      //this loops till a valid cellId is found (neither already made move before,
-      while (this.p2Moves.includes(cellId) || this.p1Hits.some(hit => hit.cellId === cellId)) {
-        cellId = Math.floor(Math.random() * 100);
-      }
-      // attempt the shot
-      console.log("CPU choosing cell: "+ cellId);
-      this.takeShot('p2', cellId);
-    },
 
-    //shoots at the target @player 's board on the @cellId location
     takeShot(player, cellId) {
-      if (player === 'p1') {
-        this.p1Moves.push(cellId); // record player 1's move
-        const hitShip = this.p2Ships.find(ship => ship.locations.includes(cellId));
-        if (hitShip) {
-          this.p2Hits.push({cellId, hit: true}); // record player 2's ship being hit
-          this.score1++; // player score goes up
-          console.log("P1 hit! Cell:" + cellId);
-        } else {
-          this.p2Hits.push({cellId, hit: false});
-          console.log("P1 miss. Cell: " + cellId);
-        }
+      console.log(player + " tried to shoot this cell: " + cellId)
+      if (player === this.currentPlayer) {
+        this.p1Moves.push(cellId)
       } else {
-        this.p2Moves.push(cellId); // record player 2's move
-        const hitShip = this.p1Ships.find(ship => ship.locations.includes(cellId));
-        if (hitShip) {
-          this.p1Hits.push({cellId, hit: true});
-          this.score2++;
-          console.log("P2 hit! Cell: " + cellId);
-        } else {
-          this.p1Hits.push({cellId, hit: false});
-          console.log("P2 miss. Cell: " + cellId);
-        }
+        this.p2Moves.push(cellId)
       }
+      this.$webSocketService.sendMessage(`/app/game/shots`,  {location: cellId}, {"gameId": this.$route.params.id});
 
-      //checks after every shot if all ships are sunk, could be changed by checking if the number of hit ship pieces is equal to the amount of cells the ships total.
-      if (this.checkAllShipsSunk('p1')) {
-        console.log("Player 1's ships have been sunk. Player 2 wins!");
-        this.endGame('p2'); // Player 2 wins
-      } else if (this.checkAllShipsSunk('p2')) {
-        console.log("Player 2's ships have been sunk. Player 1 wins!");
-        this.endGame('p1'); // Player 1 wins
-      } else {
-        // switch turns after logging the hit/miss
-        this.switchTurn(); // Always switch turns after a hit/miss
-      }
     },
-    checkAllShipsSunk(player) {
-      const ships = player === 'p1' ? this.p1Ships : this.p2Ships;
-      const hits = player === 'p1' ? this.p1Hits : this.p2Hits;
 
-      return ships.every(ship =>
-          ship.locations.every(location =>
-              hits.some(hit => hit.cellId === location && hit.hit)
-          )
-      );
-    },
     //ends the game and announces a winner, resets the game after clicking ok on the alert.
     endGame(winner) {
       alert(winner + " wins!");

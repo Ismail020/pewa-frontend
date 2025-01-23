@@ -2,7 +2,7 @@
   <div class="bg-gray-800 p-4 rounded-md w-[320px] h-[536px]">
     <h2 class="font-bold mb-2">{{ title }}</h2>
     <ul class="space-y-1 overflow-auto h-[90%]">
-      <li v-for="(move, index) in moves" :key="index">{{ index + 1 }}: {{ translateMove(move) }} + {{ move }}</li>
+      <li v-for="(move, index) in moves" :key="index">{{ index + 1 }}: {{ translateMove(move) }}</li>
     </ul>
   </div>
 </template>

@@ -77,8 +77,14 @@ export default {
         if (this.player2Type === 'CPU') {
           this.$refs.p2Board.randomizeShipPlacement();
         }
+        // this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships);
+        console.log("player:"  + player);
+
+
       } else if (player === 'p2') {
         this.p2Phase = 'gameplay';
+        // this.$webSocketService.sendMessage("/app/ships-placed", this.p2Ships)
+        console.log("player:"  + player);
       }
 
       if (this.p1Phase === 'gameplay' && this.p2Phase === 'gameplay') {
