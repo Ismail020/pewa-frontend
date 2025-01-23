@@ -19,16 +19,16 @@
             :phase="p1Phase"
             :playerType="'human'"
             @allShipsPlaced="handleAllShipsPlaced()"
-            @cellClicked="takeShot(this.currentPlayer, $event)"
+            @cellClicked="noop()"
         />
 
         <BoardPlayerComponent
             ref="p2Board"
-            :ships="p2Ships"
+            :ships="[]"
             :hits="p2Hits"
             :phase="p2Phase"
             :playerType="'CPU'"
-            @allShipsPlaced="handleAllShipsPlaced()"
+            @allShipsPlaced="noop()"
             @cellClicked="takeShot(rightPlayer, $event)"
         />
 
@@ -107,6 +107,10 @@ export default {
   },
   methods: {
 
+    noop() {
+      //do nothing
+    },
+
     handleAllShipsPlaced() {
 
       const gameId = this.$route.params.id
@@ -114,8 +118,6 @@ export default {
         this.p1Phase = 'gameplay';
         this.p2Phase = 'gameplay';
         this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships, {"gameId": gameId});
-
-
 
       // check if both players are ready to start (boards are set up).
       if (this.p1Phase === 'gameplay' && this.p2Phase === 'gameplay') {
