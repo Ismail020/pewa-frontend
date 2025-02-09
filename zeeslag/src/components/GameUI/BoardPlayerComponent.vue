@@ -33,18 +33,16 @@
                 @click="clickCell((row - 1) * 10 + col)"
                 class="cell"
                 :class="{
-            // during the gameplay phase, mark hits as red and misses as grey
-            'bg-red-500': phase === 'gameplay' && hits.some(hit => hit.cellId === (row - 1) * 10 + col && hit.hit),
-            'bg-gray-500': phase === 'gameplay' && hits.some(hit => hit.cellId === (row - 1) * 10 + col && !hit.hit),
-
-            // default state is the color of your ships, as the enemy placements are invisible.
-            'cell-default': playerType === 'human' && isCellOccupied((row - 1), (col - 1))
-        }"
-            >
+                  // during the gameplay phase, mark hits as red and misses as grey
+                  'bg-red-500': phase === 'gameplay' && hits.some(hit => hit.cellId == (row - 1) * 10 + col && hit.hit),
+                  'bg-gray-500': phase === 'gameplay' && hits.some(hit => hit.cellId == (row - 1) * 10 + col && !hit.hit),
+                  // default state is the color of your ships, as the enemy placements are invisible.
+                  'cell-default': playerType === 'human' && isCellOccupied((row - 1), (col - 1))
+                }">
   <!--             Show ship placements only for human player -->
-              <div v-if="playerType === 'human' && ships.some(ship => ship.placed && ship.locations.includes((row - 1) * 10 + col))">
+              <!--div v-if="playerType === 'human' && ships.some(ship => ship.placed && ship.locations.includes((row - 1) * 10 + col))">
                 <div class="ship-indicator"></div>
-              </div>
+              </div-->
             </div>
           </td>
         </tr>
@@ -235,6 +233,10 @@ export default {
   display: inline-block;
 }
 
+.cell-default {
+  background-color: white;
+}
+
 .bg-red-500 {
   background-color: red;
 }
@@ -243,7 +245,4 @@ export default {
   background-color: grey;
 }
 
-.cell-default {
-  background-color: white;
-}
 </style>

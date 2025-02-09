@@ -8,6 +8,7 @@
       <TimerComponent :time="60" />
     </div>
     <div class="flex items-center space-x-4">
+      <span>{{message}}</span>
       <span>{{ phase }}</span>
       <span>{{ score1 }} - {{ score2 }}</span>
       <div class="w-10 h-10 bg-gray-700 rounded-full"></div> <!-- Placeholder for avatar -->
@@ -30,6 +31,7 @@ export default {
     score1: Number,
     score2: Number,
     phase: String,
+    message: null
   },
 };
 </script>

@@ -11,7 +11,7 @@
     />
 
     <main class="grid grid-cols-4 gap-4 mt-6">
-      <LogComponent :title="'P1 Log'" :moves="p1Moves" class="max-w-xs"/>
+      <LogComponent :title="'P2 Log'" :moves="p2Moves" class="max-w-xs"/>
 
         <BoardPlayerComponent
             :ships="myShips"
@@ -29,10 +29,10 @@
             :phase="p2Phase"
             :playerType="'CPU'"
             @allShipsPlaced="noop()"
-            @cellClicked="takeShot(rightPlayer, $event)"
+            @cellClicked="takeShot(currentPlayer, $event)"
         />
 
-      <LogComponent :title="'P2 Log'" :moves="p2Moves" class="max-w-xs"/>
+      <LogComponent :title="'P1 Log'" :moves="p1Moves" class="max-w-xs"/>
     </main>
     <ChatComponent :messages="chatMessages"/>
   </div>
@@ -145,12 +145,24 @@ export default {
 
     handleShotResult(cellId, result, shooter) {
       const isHit = result === "hit";
-      if (this.currentPlayer === shooter) {
-        this.myHits.push({cellId, hit: isHit});
-        this.p1Moves.push({cellId, hit: isHit});
+      console.log(`Shot result:`, { cellId, result, shooter });
+
+      if (shooter === this.currentPlayer) {
+        console.log(`Adding to myHits and p1Moves`);
+        this.myHits.push({cellId, hit: isHit });
+        this.p1Moves.push(cellId);
+
+        if (isHit) { // Only increase score when it's a hit
+          this.score1 += 1;
+        }
       } else {
-        this.othersHits.push({cellId, hit: isHit});
-        this.p2Moves.push({cellId, hit: isHit});
+        console.log(`Adding to othersHits and p2Moves`);
+        this.othersHits.push({ cellId, hit: isHit });
+        this.p2Moves.push(cellId);
+
+        if (isHit) { // Only increase score when it's a hit
+          this.score2 += 1;
+        }
       }
     },
 
@@ -186,12 +198,8 @@ export default {
     takeShot(player, cellId) {
       console.log(player + " tried to shoot this cell: " + cellId)
       if (player === this.currentPlayer) {
-        this.p1Moves.push(cellId)
-      } else {
-        this.p2Moves.push(cellId)
+        this.$webSocketService.sendMessage(`/app/game/shots`,  {location: cellId}, {"gameId": this.$route.params.id});
       }
-      this.$webSocketService.sendMessage(`/app/game/shots`,  {location: cellId}, {"gameId": this.$route.params.id});
-
     },
 
     //ends the game and announces a winner, resets the game after clicking ok on the alert.

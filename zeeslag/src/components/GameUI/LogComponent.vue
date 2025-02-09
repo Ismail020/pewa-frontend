@@ -17,7 +17,14 @@ export default {
   methods: {
     // method which translates a location on the board from a 1 - 100  based index (@id) to e.g. A1, B3, G9
     translateMove(id) {
-      const row = String.fromCharCode(Math.floor((id - 1) / 10) + 65); //+65 because in the CharacterCodex, A is #65.
+      console.log("Translating move:", id);
+
+      if (typeof id !== "number" || isNaN(id)) {
+        console.warn("Invalid move ID:", id);
+        //return "Invalid";
+      }
+
+      const row = String.fromCharCode(Math.floor((id - 1) / 10) + 65);
       const col = ((id - 1) % 10) + 1;
       return row + col;
     },
