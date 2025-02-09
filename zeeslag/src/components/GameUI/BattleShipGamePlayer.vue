@@ -95,6 +95,7 @@ export default {
       p1Phase: 'setup',
       p2Phase: 'setup',
       player2Type: 'CPU',
+      winner: null
     };
   },
   computed: {
@@ -122,11 +123,20 @@ export default {
       // check if both players are ready to start (boards are set up).
       if (this.p1Phase === 'gameplay' && this.p2Phase === 'gameplay') {
 
+        this.$webSocketService.subscribe("/user/queue/game/gameover", (response) => {
+          let gameOverMessage = JSON.parse(response.body)
+          console.log(gameOverMessage)
+          this.winner = gameOverMessage.winner
+        });
         this.$webSocketService.subscribe("/user/queue/game/shots", (response) => {
           let shotinfo = JSON.parse(response.body)
           console.log(shotinfo)
           this.handleShotResult(shotinfo.location, shotinfo.result, shotinfo.shooter)
+          if (shotinfo.gameOver === true) {
+            this.endGame(this.winner)
+          }
         });
+
         console.log("starting game")
         this.startGame();
       }
@@ -188,6 +198,7 @@ export default {
     endGame(winner) {
       alert(winner + " wins!");
       this.resetGame();
+      this.$router.push("/selectGamemode")
     },
     //resets the game by resetting all relevant variables from before the game starts.
     resetGame() {
