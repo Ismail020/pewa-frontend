@@ -31,7 +31,7 @@ export default {
     score1: Number,
     score2: Number,
     phase: String,
-    message: null
+    message: String
   },
 };
 </script>

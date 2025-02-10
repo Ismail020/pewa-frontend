@@ -8,10 +8,11 @@
         :score1="score1"
         :score2="score2"
         :phase="p1Phase"
+        :message="message"
     />
 
     <main class="grid grid-cols-4 gap-4 mt-6">
-      <LogComponent :title="'P2 Log'" :moves="p2Moves" class="max-w-xs"/>
+      <LogComponent :title="'Incoming shots'" :moves="p2Moves" class="max-w-xs"/>
 
         <BoardPlayerComponent
             :ships="myShips"
@@ -32,7 +33,7 @@
             @cellClicked="takeShot(currentPlayer, $event)"
         />
 
-      <LogComponent :title="'P1 Log'" :moves="p1Moves" class="max-w-xs"/>
+      <LogComponent :title="'Shots fired'" :moves="p1Moves" class="max-w-xs"/>
     </main>
     <ChatComponent :messages="chatMessages"/>
   </div>
@@ -95,7 +96,8 @@ export default {
       p1Phase: 'setup',
       p2Phase: 'setup',
       player2Type: 'CPU',
-      winner: null
+      winner: null,
+      message: null
     };
   },
   computed: {
@@ -113,8 +115,11 @@ export default {
     },
 
     handleAllShipsPlaced() {
-
       const gameId = this.$route.params.id
+
+      this.$webSocketService.subscribe(`/user/queue/${gameId}`, (response) => {
+        this.message = JSON.parse(response.body).message
+      })
 
         this.p1Phase = 'gameplay';
         this.p2Phase = 'gameplay';
@@ -127,6 +132,7 @@ export default {
           let gameOverMessage = JSON.parse(response.body)
           console.log(gameOverMessage)
           this.winner = gameOverMessage.winner
+          this.message = gameOverMessage.winner
         });
         this.$webSocketService.subscribe("/user/queue/game/shots", (response) => {
           let shotinfo = JSON.parse(response.body)
@@ -196,7 +202,6 @@ export default {
 
 
     takeShot(player, cellId) {
-      console.log(player + " tried to shoot this cell: " + cellId)
       if (player === this.currentPlayer) {
         this.$webSocketService.sendMessage(`/app/game/shots`,  {location: cellId}, {"gameId": this.$route.params.id});
       }
