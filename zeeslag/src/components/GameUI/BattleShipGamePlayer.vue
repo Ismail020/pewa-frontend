@@ -4,35 +4,38 @@
         :player1="currentPlayer"
         :player2="rightPlayer"
         :round="round"
-        :turn="turn"
         :score1="score1"
         :score2="score2"
         :phase="p1Phase"
+        :message="message"
     />
 
     <main class="grid grid-cols-4 gap-4 mt-6">
-      <LogComponent :title="'P1 Log'" :moves="p1Moves" class="max-w-xs"/>
+      <LogComponent :title="'Incoming shots'" :moves="p2Moves" class="max-w-xs"/>
 
         <BoardPlayerComponent
-            :ships="p1Ships"
-            :hits="p1Hits"
+            :ships="myShips"
+            :hits="othersHits"
             :phase="p1Phase"
             :playerType="'human'"
             @allShipsPlaced="handleAllShipsPlaced()"
-            @cellClicked="takeShot(this.currentPlayer, $event)"
+            @cellClicked="noop()"
+
         />
 
         <BoardPlayerComponent
             ref="p2Board"
-            :ships="p2Ships"
-            :hits="p2Hits"
+            :ships="[]"
+            :hits="myHits"
             :phase="p2Phase"
             :playerType="'CPU'"
-            @allShipsPlaced="handleAllShipsPlaced()"
-            @cellClicked="takeShot(rightPlayer, $event)"
+            @allShipsPlaced="noop()"
+            @cellClicked="cellClickedHandler"
+            :turn="turn"
+
         />
 
-      <LogComponent :title="'P2 Log'" :moves="p2Moves" class="max-w-xs"/>
+      <LogComponent :title="'Shots fired'" :moves="p1Moves" class="max-w-xs"/>
     </main>
     <ChatComponent :messages="chatMessages"/>
   </div>
@@ -62,12 +65,12 @@ export default {
       player1: this.$route.query.player1,
       player2: this.$route.query.player2,
       round: 1, //starts at round 1, goes up per turn done by player 2. could still be changed for if the first player to start is random.
-      turn: "P1", // could still be randomised when adding multiplayer
+      turn: false, // could still be randomised when adding multiplayer
       score1: 0,
       score2: 0,
       p1Moves: [], // list of all shots taken by player
       p2Moves: [], // list of all shots taken by player
-      p1Ships: [
+      myShips: [
           //list of all ships to be used by the players.
         {name: "Carrier", size: 5, locations: [], placed: false},
         {name: "Battleship", size: 4, locations: [], placed: false},
@@ -75,7 +78,7 @@ export default {
         {name: "Submarine", size: 3, locations: [], placed: false},
         {name: "Destroyer", size: 2, locations: [], placed: false}
       ],
-      p1Hits: [], //list of all hits taken by the player.
+      othersHits: [], //list of all hits taken by the player.
       p2Ships: [
         {name: "Carrier", size: 5, locations: [], placed: false},
         {name: "Battleship", size: 4, locations: [], placed: false},
@@ -83,7 +86,7 @@ export default {
         {name: "Submarine", size: 3, locations: [], placed: false},
         {name: "Destroyer", size: 2, locations: [], placed: false}
       ],
-      p2Hits: [],
+      myHits: [],
       chatMessages: [
         {
           user: "xX_sampleUsername123_Xx",
@@ -95,41 +98,59 @@ export default {
       p1Phase: 'setup',
       p2Phase: 'setup',
       player2Type: 'CPU',
+      winner: null,
+      message: null
     };
   },
   computed: {
 
     rightPlayer() {
       return this.player1 === this.currentPlayer ? this.player2 : this.player1;
+    },
+
+    cellClickedHandler() {
+      return this.turn ? (cellId) => this.takeShot(this.currentPlayer, cellId) : this.noop
     }
+
   },
   mounted () {
   },
   methods: {
 
-    handleAllShipsPlaced() {
+    noop() {
+      //do nothing
+    },
 
+    handleAllShipsPlaced() {
       const gameId = this.$route.params.id
+
+      this.$webSocketService.subscribe(`/user/queue/${gameId}`, (response) => {
+        this.message = JSON.parse(response.body).message
+        this.turn = JSON.parse(response.body).turn
+      })
 
         this.p1Phase = 'gameplay';
         this.p2Phase = 'gameplay';
-        this.$webSocketService.sendMessage("/app/ships-placed", this.p1Ships, {"gameId": gameId});
-
-
+        this.$webSocketService.sendMessage("/app/ships-placed", this.myShips, {"gameId": gameId});
 
       // check if both players are ready to start (boards are set up).
       if (this.p1Phase === 'gameplay' && this.p2Phase === 'gameplay') {
 
+        this.$webSocketService.subscribe("/user/queue/game/gameover", (response) => {
+          let gameOverMessage = JSON.parse(response.body)
+          console.log(gameOverMessage)
+          this.winner = gameOverMessage.winner
+          this.message = gameOverMessage.winner
+        });
         this.$webSocketService.subscribe("/user/queue/game/shots", (response) => {
-
-           let shotinfo = JSON.parse(response.body)
-
+          let shotinfo = JSON.parse(response.body)
           console.log(shotinfo)
           this.handleShotResult(shotinfo.location, shotinfo.result, shotinfo.shooter)
-
-
-
+          if (shotinfo.gameOver === true) {
+            this.endGame(this.winner)
+          }
         });
+
         console.log("starting game")
         this.startGame();
       }
@@ -137,28 +158,26 @@ export default {
 
 
     handleShotResult(cellId, result, shooter) {
+      const isHit = result === "hit";
+      console.log(`Shot result:`, { cellId, result, shooter });
 
+      if (shooter === this.currentPlayer) {
+        console.log(`Adding to myHits and p1Moves`);
+        this.myHits.push({cellId, hit: isHit });
+        this.p1Moves.push(cellId);
 
-        if (result === "hit") {
-          // Add to hits for the opponent, as the current player hit their opponent
-          if (this.currentPlayer === shooter) {
-            this.p2Hits.push({cellId, hit: true}); // Player 2 gets hit
-            this.p1Moves.push({cellId, hit: true}); // Log the move for Player 1
-          }
-          else if (this.currentPlayer !== shooter) {
-            this.p1Hits.push({cellId, hit: true}); // Player 1 gets hit
-            this.p2Moves.push({cellId, hit: true}); // Log the move for Player 2
-          }
+        if (isHit) { // Only increase score when it's a hit
+          this.score1 += 1;
         }
-        else if (result === "miss") {
-          // Log the miss for the current player
-          if (this.currentPlayer === shooter) {
-            this.p1Moves.push({cellId, hit: false}); // Log the miss for Player 1
-          }
-          else if (this.currentPlayer !== shooter) {
-            this.p2Moves.push({cellId, hit: false}); // Log the miss for Player 2
-          }
+      } else {
+        console.log(`Adding to othersHits and p2Moves`);
+        this.othersHits.push({ cellId, hit: isHit });
+        this.p2Moves.push(cellId);
+
+        if (isHit) { // Only increase score when it's a hit
+          this.score2 += 1;
         }
+      }
     },
 
     //starts the game
@@ -191,24 +210,20 @@ export default {
 
 
     takeShot(player, cellId) {
-      console.log(player + " tried to shoot this cell: " + cellId)
-      if (player === this.currentPlayer) {
-        this.p1Moves.push(cellId)
-      } else {
-        this.p2Moves.push(cellId)
+      if (player === this.currentPlayer && !this.p1Moves.includes(cellId)) {
+        this.$webSocketService.sendMessage(`/app/game/shots`,  {location: cellId}, {"gameId": this.$route.params.id});
       }
-      this.$webSocketService.sendMessage(`/app/game/shots`,  {location: cellId}, {"gameId": this.$route.params.id});
-
     },
 
     //ends the game and announces a winner, resets the game after clicking ok on the alert.
     endGame(winner) {
       alert(winner + " wins!");
       this.resetGame();
+      this.$router.push("/selectGamemode")
     },
     //resets the game by resetting all relevant variables from before the game starts.
     resetGame() {
-      this.p1Ships.forEach(ship => {
+      this.myShips.forEach(ship => {
         ship.locations = [];
         ship.placed = false;
       });
@@ -216,8 +231,8 @@ export default {
         ship.locations = [];
         ship.placed = false;
       });
-      this.p1Hits = [];
-      this.p2Hits = [];
+      this.othersHits = [];
+      this.myHits = [];
       this.p1Moves = [];
       this.p2Moves = [];
       this.p1Phase = 'setup';

@@ -35,8 +35,8 @@ export default {
     }
   },
   mounted() {
-    this.webSocketService.connect('your-jwt-token');
-    this.webSocketService.subscribeToMatch(this.matchId, this.handleTimerUpdate);
+    //this.webSocketService.connect('your-jwt-token');
+    //this.webSocketService.subscribeToMatch(this.matchId, this.handleTimerUpdate);
     setInterval(this.countdown, 1000);
   },
   beforeDestroy() {
