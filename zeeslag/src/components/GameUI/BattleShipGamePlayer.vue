@@ -4,7 +4,6 @@
         :player1="currentPlayer"
         :player2="rightPlayer"
         :round="round"
-        :turn="turn"
         :score1="score1"
         :score2="score2"
         :phase="p1Phase"
@@ -21,6 +20,7 @@
             :playerType="'human'"
             @allShipsPlaced="handleAllShipsPlaced()"
             @cellClicked="noop()"
+
         />
 
         <BoardPlayerComponent
@@ -30,7 +30,9 @@
             :phase="p2Phase"
             :playerType="'CPU'"
             @allShipsPlaced="noop()"
-            @cellClicked="takeShot(currentPlayer, $event)"
+            @cellClicked="cellClickedHandler"
+            :turn="turn"
+
         />
 
       <LogComponent :title="'Shots fired'" :moves="p1Moves" class="max-w-xs"/>
@@ -63,7 +65,7 @@ export default {
       player1: this.$route.query.player1,
       player2: this.$route.query.player2,
       round: 1, //starts at round 1, goes up per turn done by player 2. could still be changed for if the first player to start is random.
-      turn: "P1", // could still be randomised when adding multiplayer
+      turn: false, // could still be randomised when adding multiplayer
       score1: 0,
       score2: 0,
       p1Moves: [], // list of all shots taken by player
@@ -104,7 +106,12 @@ export default {
 
     rightPlayer() {
       return this.player1 === this.currentPlayer ? this.player2 : this.player1;
+    },
+
+    cellClickedHandler() {
+      return this.turn ? (cellId) => this.takeShot(this.currentPlayer, cellId) : this.noop
     }
+
   },
   mounted () {
   },
@@ -119,6 +126,7 @@ export default {
 
       this.$webSocketService.subscribe(`/user/queue/${gameId}`, (response) => {
         this.message = JSON.parse(response.body).message
+        this.turn = JSON.parse(response.body).turn
       })
 
         this.p1Phase = 'gameplay';
@@ -202,7 +210,7 @@ export default {
 
 
     takeShot(player, cellId) {
-      if (player === this.currentPlayer) {
+      if (player === this.currentPlayer && !this.p1Moves.includes(cellId)) {
         this.$webSocketService.sendMessage(`/app/game/shots`,  {location: cellId}, {"gameId": this.$route.params.id});
       }
     },

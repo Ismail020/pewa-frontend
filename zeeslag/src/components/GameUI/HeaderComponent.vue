@@ -8,6 +8,7 @@
       <TimerComponent :time="60" />
     </div>
     <div class="flex items-center space-x-4">
+      <span> {{turn}} </span>
       <span>{{message}}</span>
       <span>{{ phase }}</span>
       <span>{{ score1 }} - {{ score2 }}</span>
@@ -27,11 +28,10 @@ export default {
     player1: String,
     player2: String,
     round: Number,
-    turn: String,
     score1: Number,
     score2: Number,
     phase: String,
-    message: String
+    message: String,
   },
 };
 </script>
